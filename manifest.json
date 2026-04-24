@@ -1,0 +1,22 @@
+{
+  "name": "しごとの ことば クイズ",
+  "short_name": "ことばクイズ",
+  "description": "現場で使う言葉の「読み方」と「意味」をゲーム感覚で学習！",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#3498db",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

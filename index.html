@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>しごとの ことば クイズ</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3498db">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --bg: #f0f4f8;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            height: 100vh; overflow: hidden; color: var(--text);
+        }
+
+        #app-container {
+            width: 100%; max-width: 480px; height: 100%;
+            display: flex; flex-direction: column; position: relative;
+        }
+
+        .screen {
+            display: none; flex-direction: column; align-items: center;
+            justify-content: flex-start; height: 100%;
+            padding: 20px; box-sizing: border-box; overflow-y: auto;
+            position: relative;
+        }
+        .screen.active { display: flex; animation: fadeIn 0.3s; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 言語セレクター */
+        .lang-selector {
+            position: absolute; top: 15px; right: 15px;
+            padding: 8px; border-radius: 8px; border: 1px solid #ccc;
+            font-size: 0.9rem; background: white; cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 100;
+        }
+
+        h1 { font-size: 1.8rem; color: #2c3e50; text-align: center; margin: 40px 0 20px; line-height: 1.4; }
+
+        .btn {
+            color: white; font-size: 1.1rem; font-weight: bold;
+            border: none; border-radius: 50px; padding: 15px 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); cursor: pointer;
+            width: 90%; margin-bottom: 15px; text-align: center;
+            transition: transform 0.1s;
+        }
+        .btn:active { transform: translateY(4px); box-shadow: 0 0px 2px rgba(0,0,0,0.2); }
+        
+        .btn-start { background-color: var(--primary); }
+        .btn-badges { background-color: var(--warning); }
+        .btn-back { background-color: #95a5a6; margin-top: 20px; }
+
+        /* クイズ画面 */
+        .progress-bar { width: 100%; height: 10px; background-color: #ddd; border-radius: 5px; margin-bottom: 15px; margin-top: 20px; }
+        .progress-fill { height: 100%; background-color: var(--primary); width: 0%; transition: width 0.3s; border-radius: 5px; }
+        
+        .q-tag {
+            display: inline-block; padding: 6px 16px; border-radius: 20px;
+            background: #e1f5fe; color: #0277bd; font-size: 1rem; font-weight: bold; margin-bottom: 15px;
+        }
+        
+        .question-card { background: white; width: 100%; border-radius: 15px; padding: 30px 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box; }
+        .kanji-text { font-size: 3rem; font-weight: bold; color: var(--danger); margin: 0; line-height: 1.2; }
+
+        .choices-container { display: flex; flex-direction: column; gap: 10px; width: 100%; padding-bottom: 20px; }
+        .choice-btn { background-color: #ffffff; border: 2px solid #bdc3c7; color: #2c3e50; font-size: 1.1rem; font-weight: bold; padding: 16px; border-radius: 10px; cursor: pointer; transition: all 0.1s; -webkit-tap-highlight-color: transparent; }
+        .choice-btn:active { background-color: #ecf0f1; transform: scale(0.98); }
+
+        /* 結果画面 */
+        .result-content { text-align: center; width: 100%; padding-bottom: 30px; overflow-x: hidden; padding-top: 20px; }
+        
+        @keyframes bangEffect {
+            0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+            50% { transform: scale(1.3) rotate(5deg); opacity: 1; }
+            70% { transform: scale(0.9) rotate(-2deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .bang-anim {
+            animation: bangEffect 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            font-size: 3.5rem; font-weight: 900; text-shadow: 3px 3px 0px rgba(0,0,0,0.15);
+            margin: 15px 0 25px; text-align: center; letter-spacing: 2px;
+        }
+
+        @keyframes slideUpFade { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        .stats-anim { animation: slideUpFade 0.5s ease-out 0.3s forwards; opacity: 0; }
+
+        .result-title { font-size: 1.5rem; color: #2c3e50; margin-bottom: 5px; font-weight: bold; }
+        .stats-box { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 2px solid #ecf0f1; }
+        .stat-text { font-size: 1.2rem; margin: 10px 0; font-weight: bold; }
+
+        #new-badge-alert {
+            display: none; background: linear-gradient(135deg, #ffd700, #ffa500); color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+        }
+        #new-badge-alert h3 { margin: 0 0 5px 0; font-size: 1.1rem; }
+        #new-badge-names { font-size: 1rem; font-weight: bold; }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .review-area { text-align: left; background: white; border: 2px solid #ffcdd2; border-radius: 10px; padding: 15px; margin-bottom: 25px; display: none; }
+        .review-title { color: var(--danger); font-size: 1rem; font-weight: bold; margin-top: 0; margin-bottom: 10px; }
+        .review-item { border-bottom: 1px dashed #eee; padding: 10px 0; font-size: 0.95rem; }
+        .review-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .review-kanji { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; color: var(--text); display: inline-block; }
+
+        .badges-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; padding-bottom: 20px; }
+        .badge-card { background: white; border-radius: 10px; padding: 15px 10px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; opacity: 0.5; filter: grayscale(100%); display: flex; flex-direction: column; justify-content: center; align-items: center;}
+        .badge-card.unlocked { opacity: 1; filter: grayscale(0%); background: #fffbe6; border: 2px solid #ffd700; }
+        .badge-icon { font-size: 2.2rem; margin-bottom: 5px; }
+        .badge-title { font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: #333; line-height: 1.2;}
+        .badge-desc { font-size: 0.7rem; color: #666; line-height: 1.2;}
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div id="start-screen" class="screen active">
+        <select id="lang-select" class="lang-selector" onchange="changeLanguage(this.value)">
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="vi">🇻🇳 Tiếng Việt</option>
+            <option value="id">🇮🇩 B. Indonesia</option>
+            <option value="tl">🇵🇭 Tagalog</option>
+            <option value="th">🇹🇭 ภาษาไทย</option>
+            <option value="my">🇲🇲 မြန်မာ</option>
+            <option value="km">🇰🇭 ភាសាខ្មែរ</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="ne">🇳🇵 नेपाली</option>
+        </select>
+
+        <h1 id="ui-title">しごとの ことば<br>クイズ</h1>
+        <p id="ui-desc" style="color:#555; text-align:center; margin-bottom: 25px;">
+            ことばの<strong>「よみかた」</strong>と<br><strong>「いみ」</strong>を こたえましょう。
+        </p>
+        <button class="btn btn-start" id="ui-btn-start" onclick="startGame()">▶ はじめる</button>
+        <button class="btn btn-badges" id="ui-btn-badges" onclick="showBadgeScreen()">🏅 わたしの バッジ</button>
+        <p id="ui-note" style="color:#777; font-size:0.85rem; margin-top:20px; text-align:center;">ぜんぶで 40の ことばから 10もん でます</p>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+        <div id="q-mode" class="q-tag">よみかたは どれですか？</div>
+        <div class="question-card">
+            <p id="kanji-text" class="kanji-text">漢字</p>
+        </div>
+        <div id="choices-container" class="choices-container"></div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <div class="result-content">
+            <div class="result-title" id="ui-finish">おわりました！</div>
+            <div id="result-rank-title" class="bang-anim">ランク S</div>
+            
+            <div id="new-badge-alert">
+                <h3 id="ui-new-badge">🎉 あたらしい バッジを もらいました！</h3>
+                <div id="new-badge-names"></div>
+            </div>
+
+            <div class="stats-box stats-anim" id="stats-box-anim">
+                <div id="result-score" class="stat-text" style="color:var(--danger);">あなたのスコア： 0 / 10</div>
+                <div id="result-time" class="stat-text" style="color:#2c3e50;">タイム： 0.0 秒</div>
+            </div>
+
+            <div id="review-area" class="review-area stats-anim">
+                <p class="review-title" id="ui-review-title">もういちど おぼえましょう</p>
+                <div id="mistakes-list"></div>
+            </div>
+            
+            <button class="btn btn-start stats-anim" id="ui-btn-back-start" onclick="switchScreen('start-screen')">はじめの がめんへ</button>
+            <button class="btn btn-badges stats-anim" id="ui-btn-view-badges" onclick="showBadgeScreen()">🏅 バッジを みる</button>
+        </div>
+    </div>
+
+    <div id="badge-screen" class="screen">
+        <h2 id="ui-badge-title" style="color:var(--warning); margin-bottom:10px; margin-top:10px;">🏅 わたしの バッジ</h2>
+        <p id="ui-badge-desc" style="margin-bottom:20px; font-size:0.9rem; color:#555;">たくさん あそんで、バッジを あつめましょう！</p>
+        <div id="badges-container" class="badges-grid"></div>
+        <button class="btn btn-back" id="ui-btn-back" onclick="switchScreen('start-screen')">もどる</button>
+    </div>
+</div>
+
+<script>
+    // 翻訳辞書データ（UI + バッジのタイトル・説明）
+    const translations = {
+        ja: {
+            title: "しごとの ことば<br>クイズ", desc: "ことばの<strong>「よみかた」</strong>と<br><strong>「いみ」</strong>を こたえましょう。",
+            btnStart: "▶ はじめる", btnBadges: "🏅 わたしの バッジ", note: "ぜんぶで 40の ことばから 10もん でます",
+            finish: "おわりました！", scoreLabel: "あなたのスコア：", timeLabel: "タイム：", secLabel: "秒",
+            reviewTitle: "もういちど おぼえましょう", btnBackStart: "はじめの がめんへ", btnViewBadges: "🏅 バッジを みる",
+            badgeTitle: "🏅 わたしの バッジ", badgeDesc: "たくさん あそんで、バッジを あつめましょう！", btnBack: "もどる",
+            newBadge: "🎉 あたらしい バッジを もらいました！", secretName: "ひみつのバッジ", secretHint: "条件(じょうけん)は ひみつです",
+            badges: {
+                first_play: { t: "はじめてのプレイ", d: "1回 クイズであそぶ" },
+                play_30: { t: "しゅうかんプレイヤー", d: "30回 クイズであそぶ" },
+                play_100: { t: "クイズマスター", d: "100回 クイズであそぶ" },
+                correct_50: { t: "ことばのたまご", d: "50問 正しくこたえる" },
+                correct_300: { t: "ことばハカセ", d: "300問 正しくこたえる" },
+                correct_800: { t: "げんばのプロ", d: "800問 正しくこたえる" },
+                s_rank_1: { t: "Sランクデビュー", d: "初めて Sランクをとる" },
+                s_rank_10: { t: "エリート実習生", d: "Sランクを 10回とる" },
+                s_rank_30: { t: "でんせつの先輩", d: "Sランクを 30回とる" },
+                perfect: { t: "かんぺき！", d: "10問ぜんぶ 正しくこたえる" },
+                streak_30: { t: "ぜっこうちょう！", d: "30問 つづけて正解する" },
+                lucky_7: { t: "ギリギリセーフ！", d: "ぴったり 7問正解する" }
+            }
+        },
+        vi: {
+            title: "Câu đố từ vựng<br>Công việc", desc: "Hãy trả lời <strong>Cách đọc</strong> và <strong>Ý nghĩa</strong><br>của các từ vựng.",
+            btnStart: "▶ Bắt đầu", btnBadges: "🏅 Huy hiệu của tôi", note: "Sẽ có 10 câu hỏi từ tổng số 40 từ vựng",
+            finish: "Hoàn thành!", scoreLabel: "Điểm của bạn:", timeLabel: "Thời gian:", secLabel: "giây",
+            reviewTitle: "Hãy ghi nhớ lại lần nữa", btnBackStart: "Về màn hình chính", btnViewBadges: "🏅 Xem huy hiệu",
+            badgeTitle: "🏅 Huy hiệu của tôi", badgeDesc: "Hãy chơi thật nhiều và thu thập huy hiệu nhé!", btnBack: "Quay lại",
+            newBadge: "🎉 Bạn nhận được huy hiệu mới!", secretName: "Huy hiệu bí mật", secretHint: "Điều kiện là một bí mật",
+            badges: {
+                first_play: { t: "Chơi lần đầu", d: "Chơi 1 lần" },
+                play_30: { t: "Người chơi thường xuyên", d: "Chơi 30 lần" },
+                play_100: { t: "Bậc thầy câu đố", d: "Chơi 100 lần" },
+                correct_50: { t: "Quả trứng từ vựng", d: "Trả lời đúng 50 câu" },
+                correct_300: { t: "Tiến sĩ từ vựng", d: "Trả lời đúng 300 câu" },
+                correct_800: { t: "Chuyên gia hiện trường", d: "Trả lời đúng 800 câu" },
+                s_rank_1: { t: "Lần đầu hạng S", d: "Lần đầu đạt hạng S" },
+                s_rank_10: { t: "Thực tập sinh tinh hoa", d: "Đạt hạng S 10 lần" },
+                s_rank_30: { t: "Tiền bối huyền thoại", d: "Đạt hạng S 30 lần" },
+                perfect: { t: "Hoàn hảo!", d: "Trả lời đúng tất cả 10 câu" },
+                streak_30: { t: "Tuyệt đỉnh!", d: "Trả lời đúng liên tiếp 30 câu" },
+                lucky_7: { t: "Suýt thì trượt!", d: "Trả lời đúng chính xác 7 câu" }
+            }
+        },
+        id: {
+            title: "Kuis Kosakata<br>Pekerjaan", desc: "Mari jawab <strong>Cara baca</strong> dan <strong>Arti</strong><br>dari kata-kata tersebut.",
+            btnStart: "▶ Mulai", btnBadges: "🏅 Lencana Saya", note: "10 pertanyaan akan muncul dari total 40 kata",
+            finish: "Selesai!", scoreLabel: "Skor Anda:", timeLabel: "Waktu:", secLabel: "detik",
+            reviewTitle: "Mari kita ingat lagi", btnBackStart: "Kembali ke awal", btnViewBadges: "🏅 Lihat Lencana",
+            badgeTitle: "🏅 Lencana Saya", badgeDesc: "Mainkan terus dan kumpulkan lencananya!", btnBack: "Kembali",
+            newBadge: "🎉 Anda mendapat lencana baru!", secretName: "Lencana Rahasia", secretHint: "Syaratnya adalah rahasia",
+            badges: {
+                first_play: { t: "Main Pertama Kali", d: "Main 1 kali" },
+                play_30: { t: "Pemain Rutin", d: "Main 30 kali" },
+                play_100: { t: "Master Kuis", d: "Main 100 kali" },
+                correct_50: { t: "Telur Kosakata", d: "Jawab benar 50 soal" },
+                correct_300: { t: "Doktor Kosakata", d: "Jawab benar 300 soal" },
+                correct_800: { t: "Profesional Lapangan", d: "Jawab benar 800 soal" },
+                s_rank_1: { t: "Debut Peringkat S", d: "Mendapatkan Peringkat S pertama kali" },
+                s_rank_10: { t: "Pemagang Elit", d: "Mendapat Peringkat S 10 kali" },
+                s_rank_30: { t: "Senior Legendaris", d: "Mendapat Peringkat S 30 kali" },
+                perfect: { t: "Sempurna!", d: "Jawab benar semua 10 soal" },
+                streak_30: { t: "Luar Biasa!", d: "Jawab benar 30 soal berturut-turut" },
+                lucky_7: { t: "Hampir Saja!", d: "Jawab benar tepat 7 soal" }
+            }
+        },
+        tl: {
+            title: "Pagsusulit sa<br>Salitang Trabaho", desc: "Sagutin ang <strong>Pagbasa</strong> at <strong>Kahulugan</strong><br>ng mga salita.",
+            btnStart: "▶ Simulan", btnBadges: "🏅 Aking mga Badge", note: "10 tanong mula sa kabuuang 40 na salita",
+            finish: "Tapos na!", scoreLabel: "Ang iyong Iskor:", timeLabel: "Oras:", secLabel: "segundo",
+            reviewTitle: "Kabisaduhin natin ulit", btnBackStart: "Bumalik sa Simula", btnViewBadges: "🏅 Tingnan ang Badge",
+            badgeTitle: "🏅 Aking mga Badge", badgeDesc: "Maglaro ng marami at mangolekta ng mga badge!", btnBack: "Bumalik",
+            newBadge: "🎉 Nakakuha ka ng bagong badge!", secretName: "Lihim na Badge", secretHint: "Lihim ang kondisyon",
+            badges: {
+                first_play: { t: "Unang Laro", d: "Maglaro ng 1 beses" },
+                play_30: { t: "Lingguhang Manlalaro", d: "Maglaro ng 30 beses" },
+                play_100: { t: "Quiz Master", d: "Maglaro ng 100 beses" },
+                correct_50: { t: "Itlog ng Salita", d: "Sumagot ng tama sa 50 tanong" },
+                correct_300: { t: "Dalubhasa sa Salita", d: "Sumagot ng tama sa 300 tanong" },
+                correct_800: { t: "Propesyonal sa Site", d: "Sumagot ng tama sa 800 tanong" },
+                s_rank_1: { t: "S Rank Debut", d: "Unang beses makakuha ng S Rank" },
+                s_rank_10: { t: "Elite Trainee", d: "Makakuha ng S Rank ng 10 beses" },
+                s_rank_30: { t: "Alamat na Senior", d: "Makakuha ng S Rank ng 30 beses" },
+                perfect: { t: "Perpekto!", d: "Sumagot ng tama sa lahat ng 10 tanong" },
+                streak_30: { t: "Nasa Kondisyon!", d: "Sumagot ng tama sa 30 tanong na sunod-sunod" },
+                lucky_7: { t: "Muntik Na!", d: "Sumagot ng tama ng eksaktong 7 tanong" }
+            }
+        },
+        th: {
+            title: "ควิซคำศัพท์<br>การทำงาน", desc: "มาตอบ <strong>คำอ่าน</strong> และ <strong>ความหมาย</strong><br>ของคำศัพท์กันเถอะ",
+            btnStart: "▶ เริ่มเลย", btnBadges: "🏅 เหรียญตราของฉัน", note: "มี 10 คำถามจากคำศัพท์ทั้งหมด 40 คำ",
+            finish: "เสร็จสิ้น!", scoreLabel: "คะแนนของคุณ:", timeLabel: "เวลา:", secLabel: "วินาที",
+            reviewTitle: "มาทบทวนกันอีกครั้ง", btnBackStart: "กลับสู่หน้าแรก", btnViewBadges: "🏅 ดูเหรียญตรา",
+            badgeTitle: "🏅 เหรียญตราของฉัน", badgeDesc: "เล่นเยอะๆ เพื่อสะสมเหรียญตรากันเถอะ!", btnBack: "ย้อนกลับ",
+            newBadge: "🎉 คุณได้รับเหรียญตราใหม่!", secretName: "เหรียญตราลับ", secretHint: "เงื่อนไขเป็นความลับ",
+            badges: {
+                first_play: { t: "เล่นครั้งแรก", d: "เล่นควิซ 1 ครั้ง" },
+                play_30: { t: "ผู้เล่นประจำ", d: "เล่นควิซ 30 ครั้ง" },
+                play_100: { t: "ควิซมาสเตอร์", d: "เล่นควิซ 100 ครั้ง" },
+                correct_50: { t: "ไข่คำศัพท์", d: "ตอบถูก 50 ข้อ" },
+                correct_300: { t: "ด็อกเตอร์คำศัพท์", d: "ตอบถูก 300 ข้อ" },
+                correct_800: { t: "มืออาชีพหน้างาน", d: "ตอบถูก 800 ข้อ" },
+                s_rank_1: { t: "เดบิวต์แรงก์ S", d: "ได้แรงก์ S ครั้งแรก" },
+                s_rank_10: { t: "ผู้ฝึกงานอีลีท", d: "ได้แรงก์ S 10 ครั้ง" },
+                s_rank_30: { t: "รุ่นพี่ในตำนาน", d: "ได้แรงก์ S 30 ครั้ง" },
+                perfect: { t: "เพอร์เฟกต์!", d: "ตอบถูกทั้งหมด 10 ข้อ" },
+                streak_30: { t: "ท็อปฟอร์ม!", d: "ตอบถูก 30 ข้อติดกัน" },
+                lucky_7: { t: "รอดหวุดหวิด!", d: "ตอบถูก 7 ข้อพอดี" }
+            }
+        },
+        my: {
+            title: "အလုပ်ခွင် ဝေါဟာရ<br>ဉာဏ်စမ်း", desc: "စကားလုံးများ၏ <strong>အသံထွက်</strong> နှင့် <strong>အဓိပ္ပါယ်</strong> ကို ဖြေဆိုကြစို့။",
+            btnStart: "▶ စတင်ရန်", btnBadges: "🏅 ကျွန်ုပ်၏ တံဆိပ်များ", note: "စုစုပေါင်း စကားလုံး ၄၀ မှ မေးခွန်း ၁၀ ခု မေးပါမည်",
+            finish: "ပြီးပါပြီ!", scoreLabel: "သင်၏ရမှတ်-", timeLabel: "အချိန်-", secLabel: "စက္ကန့်",
+            reviewTitle: "ထပ်မံလေ့လာကြစို့", btnBackStart: "ပင်မစာမျက်နှာသို့", btnViewBadges: "🏅 တံဆိပ်များကိုကြည့်ရန်",
+            badgeTitle: "🏅 ကျွန်ုပ်၏ တံဆိပ်များ", badgeDesc: "များများကစားပြီး တံဆိပ်များကို စုဆောင်းပါ!", btnBack: "နောက်သို့",
+            newBadge: "🎉 တံဆိပ်အသစ် ရရှိပါသည်!", secretName: "လျှို့ဝှက်တံဆိပ်", secretHint: "သတ်မှတ်ချက်သည် လျှို့ဝှက်ချက်ဖြစ်သည်",
+            badges: {
+                first_play: { t: "ပထမဆုံးအကြိမ် ကစားခြင်း", d: "ဉာဏ်စမ်း ၁ ကြိမ်ကစားပါ" },
+                play_30: { t: "ပုံမှန်ကစားသူ", d: "ဉာဏ်စမ်း ၃၀ ကြိမ်ကစားပါ" },
+                play_100: { t: "ဉာဏ်စမ်း မာစတာ", d: "ဉာဏ်စမ်း ၁၀၀ ကြိမ်ကစားပါ" },
+                correct_50: { t: "ဝေါဟာရ ဥ", d: "၅၀ မေးခွန်း မှန်ကန်စွာ ဖြေဆိုပါ" },
+                correct_300: { t: "ဝေါဟာရ ပါရဂူ", d: "၃၀၀ မေးခွန်း မှန်ကန်စွာ ဖြေဆိုပါ" },
+                correct_800: { t: "လုပ်ငန်းခွင် ကျွမ်းကျင်သူ", d: "၈၀၀ မေးခွန်း မှန်ကန်စွာ ဖြေဆိုပါ" },
+                s_rank_1: { t: "S အဆင့် ပွဲဦးထွက်", d: "ပထမဆုံး S အဆင့် ရယူပါ" },
+                s_rank_10: { t: "အထက်တန်း သင်တန်းသား", d: "S အဆင့် ၁၀ ကြိမ် ရယူပါ" },
+                s_rank_30: { t: "ဒဏ္ဍာရီလာ စီနီယာ", d: "S အဆင့် ၃၀ ကြိမ် ရယူပါ" },
+                perfect: { t: "ပြီးပြည့်စုံတယ်!", d: "၁၀ မေးခွန်းလုံး မှန်ကန်စွာ ဖြေဆိုပါ" },
+                streak_30: { t: "အကောင်းဆုံးပါပဲ!", d: "၃၀ မေးခွန်း ဆက်တိုက် မှန်ကန်စွာ ဖြေဆိုပါ" },
+                lucky_7: { t: "သီသီလေးလွတ်သွားတယ်!", d: "၇ မေးခွန်း ကွက်တိ မှန်ကန်စွာ ဖြေဆိုပါ" }
+            }
+        },
+        km: {
+            title: "កម្រងសំណួរ<br>ពាក្យការងារ", desc: "សូមឆ្លើយ <strong>ការអាន</strong> និង <strong>អត្ថន័យ</strong><br>នៃពាក្យ។",
+            btnStart: "▶ ចាប់ផ្តើម", btnBadges: "🏅 ផ្លាកសញ្ញារបស់ខ្ញុំ", note: "មាន 10 សំណួរពីពាក្យសរុប 40",
+            finish: "បញ្ចប់!", scoreLabel: "ពិន្ទុរបស់អ្នក៖", timeLabel: "ពេលវេលា៖", secLabel: "វិនាទី",
+            reviewTitle: "សូមចងចាំម្តងទៀត", btnBackStart: "ត្រឡប់ទៅដើមវិញ", btnViewBadges: "🏅 មើលផ្លាកសញ្ញា",
+            badgeTitle: "🏅 ផ្លាកសញ្ញារបស់ខ្ញុំ", badgeDesc: "លេងឲ្យបានច្រើន និងប្រមូលផ្លាកសញ្ញា!", btnBack: "ត្រឡប់ក្រោយ",
+            newBadge: "🎉 អ្នកទទួលបានផ្លាកសញ្ញាថ្មី!", secretName: "ផ្លាកសញ្ញាសម្ងាត់", secretHint: "លក្ខខណ្ឌគឺជារឿងសម្ងាត់",
+            badges: {
+                first_play: { t: "លេងលើកដំបូង", d: "លេងសំណួរ 1 ដង" },
+                play_30: { t: "អ្នកលេងប្រចាំសប្តាហ៍", d: "លេងសំណួរ 30 ដង" },
+                play_100: { t: "កំពូលអ្នកឆ្លើយ", d: "លេងសំណួរ 100 ដង" },
+                correct_50: { t: "ស៊ុតពាក្យ", d: "ឆ្លើយត្រូវ 50 សំណួរ" },
+                correct_300: { t: "បណ្ឌិតពាក្យ", d: "ឆ្លើយត្រូវ 300 សំណួរ" },
+                correct_800: { t: "អ្នកជំនាញកន្លែងធ្វើការ", d: "ឆ្លើយត្រូវ 800 សំណួរ" },
+                s_rank_1: { t: "ចំណាត់ថ្នាក់ S ដំបូង", d: "ទទួលបានចំណាត់ថ្នាក់ S លើកដំបូង" },
+                s_rank_10: { t: "សិក្ខាកាមឆ្នើម", d: "ទទួលបានចំណាត់ថ្នាក់ S 10 ដង" },
+                s_rank_30: { t: "សិស្សច្បងរឿងព្រេងនិទាន", d: "ទទួលបានចំណាត់ថ្នាក់ S 30 ដង" },
+                perfect: { t: "ល្អឥតខ្ចោះ!", d: "ឆ្លើយត្រូវទាំង 10 សំណួរ" },
+                streak_30: { t: "កំពុងឡើងកូដ!", d: "ឆ្លើយត្រូវ 30 សំណួរជាប់គ្នា" },
+                lucky_7: { t: "ឆ្លងផុតទាំងប្រផិតប្រផើយ!", d: "ឆ្លើយត្រូវ 7 សំណួរគត់" }
+            }
+        },
+        zh: {
+            title: "工作词汇<br>测验", desc: "请回答单词的<strong>“读法”</strong>和<strong>“意思”</strong>。",
+            btnStart: "▶ 开始", btnBadges: "🏅 我的徽章", note: "将从40个单词中出10道题",
+            finish: "完成了！", scoreLabel: "你的分数：", timeLabel: "用时：", secLabel: "秒",
+            reviewTitle: "再复习一下吧", btnBackStart: "返回首页", btnViewBadges: "🏅 查看徽章",
+            badgeTitle: "🏅 我的徽章", badgeDesc: "多玩游戏，收集徽章吧！", btnBack: "返回",
+            newBadge: "🎉 恭喜获得新徽章！", secretName: "神秘徽章", secretHint: "解锁条件是秘密",
+            badges: {
+                first_play: { t: "第一次游玩", d: "玩1次测验" },
+                play_30: { t: "习惯玩家", d: "玩30次测验" },
+                play_100: { t: "测验大师", d: "玩100次测验" },
+                correct_50: { t: "词汇之蛋", d: "答对50题" },
+                correct_300: { t: "词汇博士", d: "答对300题" },
+                correct_800: { t: "现场专家", d: "答对800题" },
+                s_rank_1: { t: "S级初体验", d: "首次获得S级" },
+                s_rank_10: { t: "精英实习生", d: "获得10次S级" },
+                s_rank_30: { t: "传说中的前辈", d: "获得30次S级" },
+                perfect: { t: "完美！", d: "10题全部答对" },
+                streak_30: { t: "状态绝佳！", d: "连续答对30题" },
+                lucky_7: { t: "勉强过关！", d: "刚好答对7题" }
+            }
+        },
+        ne: {
+            title: "कामको शब्दावली<br>क्विज", desc: "शब्दहरूको <strong>उच्चारण</strong> र <strong>अर्थ</strong><br>जवाफ दिनुहोस्।",
+            btnStart: "▶ सुरु गर्नुहोस्", btnBadges: "🏅 मेरो ब्याजहरू", note: "कुल ४० शब्दहरूबाट १० प्रश्नहरू सोधिनेछन्",
+            finish: "सकियो!", scoreLabel: "तपाईंको स्कोर:", timeLabel: "समय:", secLabel: "सेकेन्ड",
+            reviewTitle: "फेरि याद गरौं", btnBackStart: "सुरुमा फर्कनुहोस्", btnViewBadges: "🏅 ब्याजहरू हेर्नुहोस्",
+            badgeTitle: "🏅 मेरो ब्याजहरू", badgeDesc: "धेरै खेल्नुहोस् र ब्याजहरू सङ्कलन गर्नुहोस्!", btnBack: "पछाडि",
+            newBadge: "🎉 तपाईंले नयाँ ब्याज पाउनुभयो!", secretName: "गोप्य ब्याज", secretHint: "सर्त गोप्य छ",
+            badges: {
+                first_play: { t: "पहिलो खेल", d: "१ पटक खेल्नुहोस्" },
+                play_30: { t: "नियमित खेलाडी", d: "३० पटक खेल्नुहोस्" },
+                play_100: { t: "क्विज मास्टर", d: "१०० पटक खेल्नुहोस्" },
+                correct_50: { t: "शब्दको अण्डा", d: "५० प्रश्नहरूको सही जवाफ दिनुहोस्" },
+                correct_300: { t: "शब्दको डाक्टर", d: "३०० प्रश्नहरूको सही जवाफ दिनुहोस्" },
+                correct_800: { t: "कार्यस्थलको प्रो", d: "८०० प्रश्नहरूको सही जवाफ दिनुहोस्" },
+                s_rank_1: { t: "S र्याङ्क डेब्यु", d: "पहिलो पटक S र्याङ्क प्राप्त गर्नुहोस्" },
+                s_rank_10: { t: "एलिट प्रशिक्षार्थी", d: "१० पटक S र्याङ्क प्राप्त गर्नुहोस्" },
+                s_rank_30: { t: "लिजेन्डरी सिनियर", d: "३० पटक S र्याङ्क प्राप्त गर्नुहोस्" },
+                perfect: { t: "सिद्ध!", d: "सबै १० प्रश्नहरूको सही जवाफ दिनुहोस्" },
+                streak_30: { t: "उत्कृष्ट फर्म!", d: "लगातार ३० प्रश्नहरूको सही जवाफ दिनुहोस्" },
+                lucky_7: { t: "मुस्किलले बच्यो!", d: "ठ्याक्कै ७ प्रश्नहरूको सही जवाफ दिनुहोस्" }
+            }
+        }
+    };
+
+    let currentLang = 'ja'; 
+
+    function changeLanguage(langCode) {
+        currentLang = langCode;
+        localStorage.setItem('vocabGameLang', langCode);
+        applyTranslations();
+    }
+
+    function applyTranslations() {
+        const t = translations[currentLang];
+        document.getElementById('ui-title').innerHTML = t.title;
+        document.getElementById('ui-desc').innerHTML = t.desc;
+        document.getElementById('ui-btn-start').textContent = t.btnStart;
+        document.getElementById('ui-btn-badges').textContent = t.btnBadges;
+        document.getElementById('ui-note').textContent = t.note;
+        
+        document.getElementById('ui-finish').textContent = t.finish;
+        document.getElementById('ui-review-title').textContent = t.reviewTitle;
+        document.getElementById('ui-btn-back-start').textContent = t.btnBackStart;
+        document.getElementById('ui-btn-view-badges').textContent = t.btnViewBadges;
+        document.getElementById('ui-new-badge').textContent = t.newBadge;
+        
+        document.getElementById('ui-badge-title').textContent = t.badgeTitle;
+        document.getElementById('ui-badge-desc').textContent = t.badgeDesc;
+        document.getElementById('ui-btn-back').textContent = t.btnBack;
+
+        if(document.getElementById('result-screen').classList.contains('active')) {
+            updateResultText();
+        }
+    }
+
+    const vocabData = [
+        { k: "技能実習生", y: "ぎのうじっしゅうせい", i: "わたしのざいりゅうしかくです" }, { k: "整理整頓", y: "せいりせいとん", i: "かたづけます" },
+        { k: "危険", y: "きけん", i: "あぶないです" }, { k: "注意", y: "ちゅうい", i: "きをつけてください" },
+        { k: "安全", y: "あんぜん", i: "あぶなくないです" }, { k: "厳禁", y: "げんきん", i: "ぜったいにダメ" },
+        { k: "禁止", y: "きんし", i: "ダメ" }, { k: "禁煙", y: "きんえん", i: "たばこをすってはいけません" },
+        { k: "清掃", y: "せいそう", i: "そうじします" }, { k: "非常口", y: "ひじょうぐち", i: "あぶないときにげます" },
+        { k: "非常停止", y: "ひじょうていし", i: "あぶないときおします" }, { k: "着用", y: "ちゃくよう", i: "きます、かぶります、つけます" },
+        { k: "高電圧", y: "こうでんあつ", i: "とてもつよいでんきです" }, { k: "電源", y: "でんげん", i: "ボタン、スイッチ" },
+        { k: "確認", y: "かくにん", i: "チェックします" }, { k: "危険物", y: "きけんぶつ", i: "あぶないもの" },
+        { k: "使用中", y: "しようちゅう", i: "いまつかっています" }, { k: "作業中", y: "さぎょうちゅう", i: "いましごとをしています" },
+        { k: "点検中", y: "てんけんちゅう", i: "いまチェックをしています" }, { k: "足元注意", y: "あしもとちゅうい", i: "あしのしたにきをつけてください" },
+        { k: "頭上注意", y: "ずじょうちゅうい", i: "あたまのうえにきをつけてください" }, { k: "開口部注意", y: "かいこうぶちゅうい", i: "あながあります。きをつけてください" },
+        { k: "感電注意", y: "かんでんちゅうい", i: "でんきがあぶないです。きをつけてください" }, { k: "大雨注意", y: "おおあめちゅうい", i: "あめがたくさんです。きをつけてください" },
+        { k: "使用禁止", y: "しようきんし", i: "つかってはいけません" }, { k: "立入禁止", y: "たちいりきんし", i: "はいってはいけません" },
+        { k: "通行禁止", y: "つうこうきんし", i: "とおってはいけません" }, { k: "昇降禁止", y: "しょうこうきんし", i: "のぼったりおりたりしてはいけません" },
+        { k: "火気厳禁", y: "かきげんきん", i: "ひぜったいにダメ" }, { k: "土足厳禁", y: "どそくげんきん", i: "くつぜったいにダメ" },
+        { k: "安全第一", y: "あんぜんだいいち", i: "あんぜんがいちばんたいせつです" }, { k: "安全確認", y: "あんぜんかくにん", i: "あぶないですか。チェックします" },
+        { k: "安全通路", y: "あんぜんつうろ", i: "あぶなくないみちです" }, { k: "安全装置", y: "あんぜんそうち", i: "あぶないときにつかいます" },
+        { k: "安全帯着用", y: "あんぜんたいちゃくよう", i: "ベルトをつけます" }, { k: "保護帽着用", y: "ほごぼうちゃくよう", i: "ヘルメットをかぶります" },
+        { k: "救急箱", y: "きゅうきゅうばこ", i: "くすりがはいっています" }, { k: "消火器", y: "しょうかき", i: "ひをけします" },
+        { k: "担架", y: "たんか", i: "けがをしたひとをはこびます" }, { k: "消費期限", y: "しょうひきげん", i: "このひまでたべられますのめます" }
+    ];
+
+    const TOTAL_QUESTIONS = 10;
+    let lastTimeSec = 0;
+
+    // バッジ定義（言語部分は翻訳オブジェクトから取得するため、IDと条件のみを定義）
+    const BADGES = [
+        { id: 'first_play', icon: '🔰', check: (stats) => stats.totalPlays >= 1, secret: false },
+        { id: 'play_30', icon: '🚶', check: (stats) => stats.totalPlays >= 30, secret: false },
+        { id: 'play_100', icon: '🏃‍♂️', check: (stats) => stats.totalPlays >= 100, secret: false },
+        { id: 'correct_50', icon: '📖', check: (stats) => stats.totalCorrect >= 50, secret: false },
+        { id: 'correct_300', icon: '🎓', check: (stats) => stats.totalCorrect >= 300, secret: false },
+        { id: 'correct_800', icon: '👑', check: (stats) => stats.totalCorrect >= 800, secret: false },
+        { id: 's_rank_1', icon: '🌟', check: (stats) => stats.sRankCount >= 1, secret: false },
+        { id: 's_rank_10', icon: '✨', check: (stats) => stats.sRankCount >= 10, secret: false },
+        { id: 's_rank_30', icon: '🌠', check: (stats) => stats.sRankCount >= 30, secret: false },
+        { id: 'perfect', icon: '💯', check: (stats, game) => game.correct === 10, secret: true },
+        { id: 'streak_30', icon: '🔥', check: (stats) => stats.maxStreak >= 30, secret: true },
+        { id: 'lucky_7', icon: '🍀', check: (stats, game) => game.correct === 7, secret: true }
+    ];
+
+    let playerStats;
+    try {
+        const savedData = localStorage.getItem('vocabGameStats5');
+        playerStats = savedData ? JSON.parse(savedData) : null;
+        
+        const savedLang = localStorage.getItem('vocabGameLang');
+        if (savedLang && translations[savedLang]) {
+            currentLang = savedLang;
+            document.getElementById('lang-select').value = currentLang;
+        }
+    } catch (e) { console.warn(e); }
+
+    if (!playerStats) { playerStats = { totalPlays: 0, totalCorrect: 0, currentStreak: 0, maxStreak: 0, sRankCount: 0, unlockedBadges: [] }; }
+    applyTranslations();
+
+    function saveStats() {
+        try { localStorage.setItem('vocabGameStats5', JSON.stringify(playerStats)); } catch (e) { console.warn(e); }
+    }
+
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let startTime = 0;
+    let mistakes = [];
+
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        window.scrollTo(0,0);
+        document.getElementById('lang-select').style.display = (screenId === 'start-screen') ? 'block' : 'none';
+    }
+
+    function startGame() {
+        const shuffled = [...vocabData].sort(() => 0.5 - Math.random());
+        currentQuestions = shuffled.slice(0, TOTAL_QUESTIONS);
+        currentIndex = 0; correctCount = 0; mistakes = []; startTime = Date.now();
+        updateProgress(); showQuestion(); switchScreen('quiz-screen');
+    }
+
+    function showQuestion() {
+        const currentQ = currentQuestions[currentIndex];
+        document.getElementById('kanji-text').textContent = currentQ.k;
+        const mode = Math.random() > 0.5 ? 'Y' : 'I';
+        const modeKey = mode === 'Y' ? 'y' : 'i';
+        document.getElementById('q-mode').textContent = mode === 'Y' ? "よみかたは どれですか？" : "いみは どれですか？";
+        document.getElementById('q-mode').style.color = mode === 'Y' ? "#0277bd" : "#2e7d32";
+        document.getElementById('q-mode').style.background = mode === 'Y' ? "#e1f5fe" : "#e8f5e9";
+        let choicesSet = new Set([currentQ[modeKey]]); 
+        while(choicesSet.size < 4) { 
+            let randData = vocabData[Math.floor(Math.random() * vocabData.length)];
+            choicesSet.add(randData[modeKey]);
+        }
+        let choices = Array.from(choicesSet).sort(() => 0.5 - Math.random());
+        const container = document.getElementById('choices-container');
+        container.innerHTML = '';
+        choices.forEach(text => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.textContent = text;
+            btn.onclick = () => handleAnswer(text === currentQ[modeKey], currentQ);
+            container.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(isCorrect, currentQ) {
+        if (isCorrect) {
+            correctCount++; playerStats.totalCorrect++; playerStats.currentStreak++;
+            if(playerStats.currentStreak > playerStats.maxStreak) playerStats.maxStreak = playerStats.currentStreak;
+        } else { playerStats.currentStreak = 0; mistakes.push(currentQ); }
+        currentIndex++; updateProgress();
+        if (currentIndex < TOTAL_QUESTIONS) { showQuestion(); } else { endGame(); }
+    }
+
+    function updateProgress() { document.getElementById('progress-fill').style.width = `${(currentIndex / TOTAL_QUESTIONS) * 100}%`; }
+
+    function calculateRank(score, timeSec) {
+        if (score === 10 && timeSec <= 20.0) return { label: 'S', color: '#f1c40f', isS: true }; 
+        if (score === 10) return { label: 'A', color: '#e74c3c', isS: false }; 
+        if (score >= 7) return { label: 'B', color: '#3498db', isS: false }; 
+        return { label: 'C', color: '#95a5a6', isS: false }; 
+    }
+
+    function updateResultText() {
+        const t = translations[currentLang];
+        document.getElementById('result-score').textContent = `${t.scoreLabel} ${correctCount} / ${TOTAL_QUESTIONS}`;
+        document.getElementById('result-time').textContent = `${t.timeLabel} ${lastTimeSec} ${t.secLabel}`;
+    }
+
+    function endGame() {
+        lastTimeSec = parseFloat(((Date.now() - startTime) / 1000).toFixed(1));
+        const rankInfo = calculateRank(correctCount, lastTimeSec);
+        
+        playerStats.totalPlays++; 
+        if (rankInfo.isS) { playerStats.sRankCount++; }
+        saveStats(); 
+
+        updateResultText(); 
+        
+        const rankTitleEl = document.getElementById('result-rank-title');
+        rankTitleEl.textContent = `Rank ${rankInfo.label}`; 
+        rankTitleEl.style.color = rankInfo.color;
+        rankTitleEl.classList.remove('bang-anim');
+        void rankTitleEl.offsetWidth;
+        rankTitleEl.classList.add('bang-anim');
+        
+        const statsBox = document.getElementById('stats-box-anim');
+        statsBox.classList.remove('stats-anim');
+        void statsBox.offsetWidth;
+        statsBox.classList.add('stats-anim');
+        
+        const mistakesList = document.getElementById('mistakes-list');
+        mistakesList.innerHTML = '';
+        if (mistakes.length > 0) {
+            const uniqueMistakes = Array.from(new Set(mistakes.map(m => m.k))).map(k => mistakes.find(m => m.k === k));
+            uniqueMistakes.forEach(m => {
+                mistakesList.innerHTML += `<div class="review-item"><span class="review-kanji">${m.k}</span><br><span style="color:#555; font-size:0.85rem;">よみかた：</span>${m.y}<br><span style="color:#555; font-size:0.85rem;">いみ：</span>${m.i}</div>`;
+            });
+            document.getElementById('review-area').style.display = 'block';
+        } else { document.getElementById('review-area').style.display = 'none'; }
+        
+        checkAndUnlockBadges({ correct: correctCount, time: lastTimeSec });
+        switchScreen('result-screen');
+    }
+
+    function checkAndUnlockBadges(gameResult) {
+        let newUnlocks = [];
+        const t = translations[currentLang];
+        
+        BADGES.forEach(badge => {
+            if (!playerStats.unlockedBadges.includes(badge.id) && badge.check(playerStats, gameResult)) {
+                playerStats.unlockedBadges.push(badge.id);
+                // 獲得したバッジの名前を現在選択されている言語で表示
+                newUnlocks.push(`${badge.icon} ${t.badges[badge.id].t}`);
+            }
+        });
+        if (newUnlocks.length > 0) {
+            saveStats();
+            document.getElementById('new-badge-names').innerHTML = newUnlocks.join('<br>');
+            document.getElementById('new-badge-alert').style.display = 'block';
+        } else { document.getElementById('new-badge-alert').style.display = 'none'; }
+    }
+
+    function showBadgeScreen() {
+        const container = document.getElementById('badges-container');
+        container.innerHTML = '';
+        const t = translations[currentLang];
+
+        BADGES.forEach(badge => {
+            const isUnlocked = playerStats.unlockedBadges.includes(badge.id);
+            const isSecretLocked = badge.secret && !isUnlocked; 
+            
+            const badgeData = t.badges[badge.id];
+            const displayIcon = isSecretLocked ? '❓' : badge.icon;
+            const displayTitle = isSecretLocked ? t.secretName : badgeData.t;
+            const displayDesc = isSecretLocked ? t.secretHint : badgeData.d;
+            
+            container.innerHTML += `
+                <div class="badge-card ${isUnlocked ? 'unlocked' : ''}">
+                    <div class="badge-icon">${displayIcon}</div>
+                    <div class="badge-title">${displayTitle}</div>
+                    <div class="badge-desc">${displayDesc}</div>
+                </div>`;
+        });
+        switchScreen('badge-screen');
+    }
+</script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((registration) => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, (err) => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+        });
+    }
+</script>
+</body>
+</html>
