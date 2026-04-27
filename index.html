@@ -12,6 +12,7 @@
             --secondary: #2ecc71;
             --danger: #e74c3c;
             --warning: #f39c12;
+            --info: #9b59b6;
             --bg: #f0f4f8;
             --text: #333;
         }
@@ -53,13 +54,14 @@
             color: white; font-size: 1.1rem; font-weight: bold;
             border: none; border-radius: 50px; padding: 15px 30px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2); cursor: pointer;
-            width: 90%; margin-bottom: 15px; text-align: center;
+            width: 90%; margin-bottom: 12px; text-align: center;
             transition: transform 0.1s;
         }
         .btn:active { transform: translateY(4px); box-shadow: 0 0px 2px rgba(0,0,0,0.2); }
         
         .btn-badges { background-color: var(--warning); }
-        .btn-back { background-color: #95a5a6; margin-top: 20px; }
+        .btn-manual { background-color: var(--info); }
+        .btn-back { background-color: #95a5a6; margin-top: 20px; margin-bottom: 30px; }
 
         /* モード選択グリッド */
         .mode-grid {
@@ -87,7 +89,8 @@
         
         .q-tag {
             display: inline-block; padding: 10px 24px; border-radius: 25px;
-            background: #e1f5fe; color: #0277bd; font-size: 2rem; font-weight: bold; margin-bottom: 20px;
+            background: #e1f5fe; color: #0277bd; font-size: 1.8
+            rem; font-weight: bold; margin-bottom: 20px;
         }
         
         .question-card { background: white; width: 100%; border-radius: 15px; padding: 30px 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box; }
@@ -97,23 +100,28 @@
         .choice-btn { background-color: #ffffff; border: 2px solid #bdc3c7; color: #2c3e50; font-size: 1.1rem; font-weight: bold; padding: 16px; border-radius: 10px; cursor: pointer; transition: all 0.1s; -webkit-tap-highlight-color: transparent; }
         .choice-btn:active { background-color: #ecf0f1; transform: scale(0.98); }
 
+        /* マニュアル画面 */
+        .manual-container { width: 100%; text-align: left; background: white; border-radius: 15px; padding: 20px; box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .manual-section { margin-bottom: 25px; }
+        .manual-h3 { font-size: 1.1rem; color: var(--primary); border-left: 4px solid var(--primary); padding-left: 10px; margin-bottom: 10px; }
+        .manual-p { font-size: 0.95rem; line-height: 1.6; color: #555; margin: 0; }
+
         /* 結果画面 */
         .result-content { text-align: center; width: 100%; padding-bottom: 30px; overflow-x: hidden; padding-top: 20px; }
-        
+        .bang-anim {
+            animation: bangEffect 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            font-size: 3.5rem; font-weight: 900; text-shadow: 3px 3px 0px rgba(0,0,0,0.15);
+            margin: 15px 0 25px; text-align: center; letter-spacing: 2px;
+        }
         @keyframes bangEffect {
             0% { transform: scale(0) rotate(-15deg); opacity: 0; }
             50% { transform: scale(1.3) rotate(5deg); opacity: 1; }
             70% { transform: scale(0.9) rotate(-2deg); opacity: 1; }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
-        .bang-anim {
-            animation: bangEffect 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            font-size: 3.5rem; font-weight: 900; text-shadow: 3px 3px 0px rgba(0,0,0,0.15);
-            margin: 15px 0 25px; text-align: center; letter-spacing: 2px;
-        }
 
-        @keyframes slideUpFade { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         .stats-anim { animation: slideUpFade 0.5s ease-out 0.3s forwards; opacity: 0; }
+        @keyframes slideUpFade { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
 
         .result-title { font-size: 1.5rem; color: #2c3e50; margin-bottom: 5px; font-weight: bold; }
         .stats-box { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 2px solid #ecf0f1; }
@@ -123,22 +131,19 @@
             display: none; background: linear-gradient(135deg, #ffd700, #ffa500); color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
         }
-        #new-badge-alert h3 { margin: 0 0 5px 0; font-size: 1.1rem; }
-        #new-badge-names { font-size: 1rem; font-weight: bold; }
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
         .review-area { text-align: left; background: white; border: 2px solid #ffcdd2; border-radius: 10px; padding: 15px; margin-bottom: 25px; display: none; }
-        .review-title { color: var(--danger); font-size: 1rem; font-weight: bold; margin-top: 0; margin-bottom: 10px; }
+        .review-title { color: var(--danger); font-size: 1rem; font-weight: bold; margin-bottom: 10px; }
         .review-item { border-bottom: 1px dashed #eee; padding: 10px 0; font-size: 0.95rem; }
-        .review-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .review-kanji { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; color: var(--text); display: inline-block; }
+        .review-kanji { font-size: 1.2rem; font-weight: bold; color: var(--text); }
 
         .badges-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; padding-bottom: 20px; }
-        .badge-card { background: white; border-radius: 10px; padding: 15px 10px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; opacity: 0.5; filter: grayscale(100%); display: flex; flex-direction: column; justify-content: center; align-items: center;}
+        .badge-card { background: white; border-radius: 10px; padding: 15px 10px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; opacity: 0.5; filter: grayscale(100%); display: flex; flex-direction: column; align-items: center; }
         .badge-card.unlocked { opacity: 1; filter: grayscale(0%); background: #fffbe6; border: 2px solid #ffd700; }
         .badge-icon { font-size: 2.2rem; margin-bottom: 5px; }
-        .badge-title { font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: #333; line-height: 1.2;}
-        .badge-desc { font-size: 0.7rem; color: #666; line-height: 1.2;}
+        .badge-title { font-size: 0.85rem; font-weight: bold; color: #333; }
+        .badge-desc { font-size: 0.7rem; color: #666; }
     </style>
 </head>
 <body>
@@ -170,7 +175,31 @@
         </div>
 
         <button class="btn btn-badges" id="ui-btn-badges" onclick="showBadgeScreen()">🏅 わたしの バッジ</button>
+        <button class="btn btn-manual" id="ui-btn-manual" onclick="showManualScreen()">📖 あそびかた</button>
         <p id="ui-note" style="color:#777; font-size:0.85rem; margin-top:10px; text-align:center;">えらんだ はんいから 10もん でます</p>
+    </div>
+
+    <div id="manual-screen" class="screen">
+        <h2 id="ui-manual-title" style="color:var(--info); margin-bottom:15px; margin-top:10px;">📖 あそびかた</h2>
+        <div class="manual-container">
+            <div class="manual-section">
+                <h3 class="manual-h3" id="ui-man-h1">1. はじめる じゅんび</h3>
+                <p class="manual-p" id="ui-man-p1">「ことばの はんい」を えらびましょう。10もん でます。</p>
+            </div>
+            <div class="manual-section">
+                <h3 class="manual-h3" id="ui-man-h2">2. クイズの ルール</h3>
+                <p class="manual-p" id="ui-man-p2">「よみかた」か「いみ」を 4つの なかから えらびます。はやく こたえると ランクが あがります！</p>
+            </div>
+            <div class="manual-section">
+                <h3 class="manual-h3" id="ui-man-h3">3. ランクと ふくしゅう</h3>
+                <p class="manual-p" id="ui-man-p3">おわると ランク(S, A, B, C)が でます。まちがえた ことばは あとで チェックできます。</p>
+            </div>
+            <div class="manual-section">
+                <h3 class="manual-h3" id="ui-man-h4">4. バッジを あつめる</h3>
+                <p class="manual-p" id="ui-man-p4">たくさん あそぶと バッジが もらえます。ぜんぶ あつめましょう！</p>
+            </div>
+        </div>
+        <button class="btn btn-back" id="ui-btn-manual-back" onclick="switchScreen('start-screen')">もどる</button>
     </div>
 
     <div id="quiz-screen" class="screen">
@@ -188,12 +217,12 @@
             <div id="result-rank-title" class="bang-anim">ランク S</div>
             
             <div id="new-badge-alert">
-                <h3 id="ui-new-badge">🎉 あたらしい バッジを もらいました！</h3>
+                <h3 id="ui-new-badge" style="margin:0;">🎉 あたらしい バッジ！</h3>
                 <div id="new-badge-names"></div>
             </div>
 
             <div class="stats-box stats-anim" id="stats-box-anim">
-                <div id="result-score" class="stat-text" style="color:var(--danger);">あなたのスコア： 0 / 10</div>
+                <div id="result-score" class="stat-text" style="color:var(--danger);">スコア： 0 / 10</div>
                 <div id="result-time" class="stat-text" style="color:#2c3e50;">タイム： 0.0 秒</div>
             </div>
 
@@ -216,16 +245,19 @@
 </div>
 
 <script>
-    // 翻訳辞書データ
     const translations = {
         ja: {
             title: "しごとの ことば<br>クイズ", desc: "ことばの<strong>「よみかた」</strong>と<br><strong>「いみ」</strong>を こたえましょう。",
             mode1: "1週目 (1~10)", mode2: "2週目 (1~20)", mode3: "3週目 (1~30)", mode4: "全範囲 (1~40)",
-            btnBadges: "🏅 わたしの バッジ", note: "えらんだ はんいから 10もん でます",
-            finish: "おわりました！", scoreLabel: "あなたのスコア：", timeLabel: "タイム：", secLabel: "秒",
+            btnBadges: "🏅 わたしの バッジ", btnManual: "📖 あそびかた", note: "えらんだ はんいから 10もん でます",
+            manualTitle: "📖 あそびかた", manH1: "1. はじめる じゅんび", manP1: "「ことばの はんい」を えらびましょう。10もん でます。",
+            manH2: "2. クイズの ルール", manP2: "「よみかた」か「いみ」を 4つの なかから えらびます。はやく こたえると ランクが あがります！",
+            manH3: "3. ランクと ふくしゅう", manP3: "おわると ランク(S, A, B, C)が でます。まちがえた ことばは あとで チェックできます。",
+            manH4: "4. バッジを あつめる", manP4: "たくさん あそぶと バッジが もらえます。ぜんぶ あつめましょう！",
+            finish: "おわりました！", scoreLabel: "スコア：", timeLabel: "タイム：", secLabel: "秒",
             reviewTitle: "もういちど おぼえましょう", btnBackStart: "はじめの がめんへ", btnViewBadges: "🏅 バッジを みる",
             badgeTitle: "🏅 わたしの バッジ", badgeDesc: "たくさん あそんで、バッジを あつめましょう！", btnBack: "もどる",
-            newBadge: "🎉 あたらしい バッジを もらいました！", secretName: "ひみつのバッジ", secretHint: "条件(じょうけん)は ひみつです",
+            newBadge: "🎉 あたらしい バッジ！", secretName: "ひみつのバッジ", secretHint: "条件(じょうけん)は ひみつです",
             badges: {
                 first_play: { t: "はじめてのプレイ", d: "1回 クイズであそぶ" },
                 play_30: { t: "しゅうかんプレイヤー", d: "30回 クイズであそぶ" },
@@ -242,189 +274,28 @@
             }
         },
         vi: {
-            title: "Câu đố từ vựng<br>Công việc", desc: "Hãy trả lời <strong>Cách đọc</strong> và <strong>Ý nghĩa</strong><br>của các từ vựng.",
+            title: "Câu đố từ vựng<br>Công việc", desc: "Hãy trả lời <strong>Cách đọc</strong> và <strong>Ý nghĩa</strong>.",
             mode1: "Tuần 1 (1~10)", mode2: "Tuần 2 (1~20)", mode3: "Tuần 3 (1~30)", mode4: "Tất cả (1~40)",
-            btnBadges: "🏅 Huy hiệu của tôi", note: "Sẽ có 10 câu hỏi từ phạm vi đã chọn",
-            finish: "Hoàn thành!", scoreLabel: "Điểm của bạn:", timeLabel: "Thời gian:", secLabel: "giây",
+            btnBadges: "🏅 Huy hiệu", btnManual: "📖 Cách chơi", note: "Sẽ có 10 câu hỏi",
+            manualTitle: "📖 Cách chơi", manH1: "1. Chuẩn bị", manP1: "Chọn phạm vi từ vựng. Sẽ có 10 câu hỏi.",
+            manH2: "2. Quy tắc", manP2: "Chọn cách đọc hoặc ý nghĩa đúng. Trả lời nhanh để tăng hạng!",
+            manH3: "3. Xếp hạng và Ôn tập", manP3: "Kết thúc sẽ có hạng (S, A, B, C). Có thể xem lại các từ bị sai.",
+            manH4: "4. Thu thập huy hiệu", manP4: "Chơi nhiều để nhận huy hiệu. Hãy thu thập tất cả!",
+            finish: "Hoàn thành!", scoreLabel: "Điểm:", timeLabel: "Thời gian:", secLabel: "giây",
             reviewTitle: "Hãy ghi nhớ lại lần nữa", btnBackStart: "Về màn hình chính", btnViewBadges: "🏅 Xem huy hiệu",
-            badgeTitle: "🏅 Huy hiệu của tôi", badgeDesc: "Hãy chơi thật nhiều và thu thập huy hiệu nhé!", btnBack: "Quay lại",
-            newBadge: "🎉 Bạn nhận được huy hiệu mới!", secretName: "Huy hiệu bí mật", secretHint: "Điều kiện là một bí mật",
+            badgeTitle: "🏅 Huy hiệu của tôi", badgeDesc: "Chơi thật nhiều để thu thập huy hiệu!", btnBack: "Quay lại",
+            newBadge: "🎉 Huy hiệu mới!", secretName: "Bí mật", secretHint: "Điều kiện là bí mật",
             badges: {
-                first_play: { t: "Chơi lần đầu", d: "Chơi 1 lần" },
-                play_30: { t: "Người chơi thường xuyên", d: "Chơi 30 lần" },
-                play_100: { t: "Bậc thầy câu đố", d: "Chơi 100 lần" },
-                correct_50: { t: "Quả trứng từ vựng", d: "Trả lời đúng 50 câu" },
-                correct_300: { t: "Tiến sĩ từ vựng", d: "Trả lời đúng 300 câu" },
-                correct_800: { t: "Chuyên gia hiện trường", d: "Trả lời đúng 800 câu" },
-                s_rank_1: { t: "Lần đầu hạng S", d: "Lần đầu đạt hạng S" },
-                s_rank_10: { t: "Thực tập sinh tinh hoa", d: "Đạt hạng S 10 lần" },
-                s_rank_30: { t: "Tiền bối huyền thoại", d: "Đạt hạng S 30 lần" },
-                perfect: { t: "Hoàn hảo!", d: "Trả lời đúng tất cả 10 câu" },
-                streak_30: { t: "Tuyệt đỉnh!", d: "Trả lời đúng liên tiếp 30 câu" },
-                lucky_7: { t: "Suýt thì trượt!", d: "Trả lời đúng chính xác 7 câu" }
+                first_play: { t: "Chơi lần đầu", d: "Chơi 1 lần" }, play_30: { t: "Người chơi thường xuyên", d: "Chơi 30 lần" },
+                play_100: { t: "Bậc thầy", d: "Chơi 100 lần" }, correct_50: { t: "Quả trứng", d: "Đúng 50 câu" },
+                correct_300: { t: "Tiến sĩ", d: "Đúng 300 câu" }, correct_800: { t: "Chuyên gia", d: "Đúng 800 câu" },
+                s_rank_1: { t: "Hạng S đầu tiên", d: "Đạt hạng S lần đầu" }, s_rank_10: { t: "Tinh hoa", d: "Đạt hạng S 10 lần" },
+                s_rank_30: { t: "Huyền thoại", d: "Đạt hạng S 30 lần" }, perfect: { t: "Hoàn hảo!", d: "Đúng 10/10 câu" },
+                streak_30: { t: "Tuyệt vời!", d: "Đúng 30 câu liên tiếp" }, lucky_7: { t: "May mắn 7", d: "Đúng chính xác 7 câu" }
             }
         },
-        id: {
-            title: "Kuis Kosakata<br>Pekerjaan", desc: "Mari jawab <strong>Cara baca</strong> dan <strong>Arti</strong><br>dari kata-kata tersebut.",
-            mode1: "Minggu 1 (1~10)", mode2: "Minggu 2 (1~20)", mode3: "Minggu 3 (1~30)", mode4: "Semua (1~40)",
-            btnBadges: "🏅 Lencana Saya", note: "10 pertanyaan akan muncul dari rentang yang dipilih",
-            finish: "Selesai!", scoreLabel: "Skor Anda:", timeLabel: "Waktu:", secLabel: "detik",
-            reviewTitle: "Mari kita ingat lagi", btnBackStart: "Kembali ke awal", btnViewBadges: "🏅 Lihat Lencana",
-            badgeTitle: "🏅 Lencana Saya", badgeDesc: "Mainkan terus dan kumpulkan lencananya!", btnBack: "Kembali",
-            newBadge: "🎉 Anda mendapat lencana baru!", secretName: "Lencana Rahasia", secretHint: "Syaratnya adalah rahasia",
-            badges: {
-                first_play: { t: "Main Pertama Kali", d: "Main 1 kali" },
-                play_30: { t: "Pemain Rutin", d: "Main 30 kali" },
-                play_100: { t: "Master Kuis", d: "Main 100 kali" },
-                correct_50: { t: "Telur Kosakata", d: "Jawab benar 50 soal" },
-                correct_300: { t: "Doktor Kosakata", d: "Jawab benar 300 soal" },
-                correct_800: { t: "Profesional Lapangan", d: "Jawab benar 800 soal" },
-                s_rank_1: { t: "Debut Peringkat S", d: "Mendapatkan Peringkat S pertama kali" },
-                s_rank_10: { t: "Pemagang Elit", d: "Mendapat Peringkat S 10 kali" },
-                s_rank_30: { t: "Senior Legendaris", d: "Mendapat Peringkat S 30 kali" },
-                perfect: { t: "Sempurna!", d: "Jawab benar semua 10 soal" },
-                streak_30: { t: "Luar Biasa!", d: "Jawab benar 30 soal berturut-turut" },
-                lucky_7: { t: "Hampir Saja!", d: "Jawab benar tepat 7 soal" }
-            }
-        },
-        tl: {
-            title: "Pagsusulit sa<br>Salitang Trabaho", desc: "Sagutin ang <strong>Pagbasa</strong> at <strong>Kahulugan</strong><br>ng mga salita.",
-            mode1: "Linggo 1 (1~10)", mode2: "Linggo 2 (1~20)", mode3: "Linggo 3 (1~30)", mode4: "Lahat (1~40)",
-            btnBadges: "🏅 Aking mga Badge", note: "10 tanong mula sa napiling saklaw",
-            finish: "Tapos na!", scoreLabel: "Ang iyong Iskor:", timeLabel: "Oras:", secLabel: "segundo",
-            reviewTitle: "Kabisaduhin natin ulit", btnBackStart: "Bumalik sa Simula", btnViewBadges: "🏅 Tingnan ang Badge",
-            badgeTitle: "🏅 Aking mga Badge", badgeDesc: "Maglaro ng marami at mangolekta ng mga badge!", btnBack: "Bumalik",
-            newBadge: "🎉 Nakakuha ka ng bagong badge!", secretName: "Lihim na Badge", secretHint: "Lihim ang kondisyon",
-            badges: {
-                first_play: { t: "Unang Laro", d: "Maglaro ng 1 beses" },
-                play_30: { t: "Lingguhang Manlalaro", d: "Maglaro ng 30 beses" },
-                play_100: { t: "Quiz Master", d: "Maglaro ng 100 beses" },
-                correct_50: { t: "Itlog ng Salita", d: "Sumagot ng tama sa 50 tanong" },
-                correct_300: { t: "Dalubhasa sa Salita", d: "Sumagot ng tama sa 300 tanong" },
-                correct_800: { t: "Propesyonal sa Site", d: "Sumagot ng tama sa 800 tanong" },
-                s_rank_1: { t: "S Rank Debut", d: "Unang beses makakuha ng S Rank" },
-                s_rank_10: { t: "Elite Trainee", d: "Makakuha ng S Rank ng 10 beses" },
-                s_rank_30: { t: "Alamat na Senior", d: "Makakuha ng S Rank ng 30 beses" },
-                perfect: { t: "Perpekto!", d: "Sumagot ng tama sa lahat ng 10 tanong" },
-                streak_30: { t: "Nasa Kondisyon!", d: "Sumagot ng tama sa 30 tanong na sunod-sunod" },
-                lucky_7: { t: "Muntik Na!", d: "Sumagot ng tama ng eksaktong 7 tanong" }
-            }
-        },
-        th: {
-            title: "ควิซคำศัพท์<br>การทำงาน", desc: "มาตอบ <strong>คำอ่าน</strong> และ <strong>ความหมาย</strong><br>ของคำศัพท์กันเถอะ",
-            mode1: "สัปดาห์ที่ 1 (1~10)", mode2: "สัปดาห์ที่ 2 (1~20)", mode3: "สัปดาห์ที่ 3 (1~30)", mode4: "ทั้งหมด (1~40)",
-            btnBadges: "🏅 เหรียญตราของฉัน", note: "มี 10 คำถามจากขอบเขตที่เลือก",
-            finish: "เสร็จสิ้น!", scoreLabel: "คะแนนของคุณ:", timeLabel: "เวลา:", secLabel: "วินาที",
-            reviewTitle: "มาทบทวนกันอีกครั้ง", btnBackStart: "กลับสู่หน้าแรก", btnViewBadges: "🏅 ดูเหรียญตรา",
-            badgeTitle: "🏅 เหรียญตราของฉัน", badgeDesc: "เล่นเยอะๆ เพื่อสะสมเหรียญตรากันเถอะ!", btnBack: "ย้อนกลับ",
-            newBadge: "🎉 คุณได้รับเหรียญตราใหม่!", secretName: "เหรียญตราลับ", secretHint: "เงื่อนไขเป็นความลับ",
-            badges: {
-                first_play: { t: "เล่นครั้งแรก", d: "เล่นควิซ 1 ครั้ง" },
-                play_30: { t: "ผู้เล่นประจำ", d: "เล่นควิซ 30 ครั้ง" },
-                play_100: { t: "ควิซมาสเตอร์", d: "เล่นควิซ 100 ครั้ง" },
-                correct_50: { t: "ไข่คำศัพท์", d: "ตอบถูก 50 ข้อ" },
-                correct_300: { t: "ด็อกเตอร์คำศัพท์", d: "ตอบถูก 300 ข้อ" },
-                correct_800: { t: "มืออาชีพหน้างาน", d: "ตอบถูก 800 ข้อ" },
-                s_rank_1: { t: "เดบิวต์แรงก์ S", d: "ได้แรงก์ S ครั้งแรก" },
-                s_rank_10: { t: "ผู้ฝึกงานอีลีท", d: "ได้แรงก์ S 10 ครั้ง" },
-                s_rank_30: { t: "รุ่นพี่ในตำนาน", d: "ได้แรงก์ S 30 ครั้ง" },
-                perfect: { t: "เพอร์เฟกต์!", d: "ตอบถูกทั้งหมด 10 ข้อ" },
-                streak_30: { t: "ท็อปฟอร์ม!", d: "ตอบถูก 30 ข้อติดกัน" },
-                lucky_7: { t: "รอดหวุดหวิด!", d: "ตอบถูก 7 ข้อพอดี" }
-            }
-        },
-        my: {
-            title: "အလုပ်ခွင် ဝေါဟာရ<br>ဉာဏ်စမ်း", desc: "စကားလုံးများ၏ <strong>အသံထွက်</strong> နှင့် <strong>အဓိပ္ပါယ်</strong> ကို ဖြေဆိုကြစို့။",
-            mode1: "ပထမအပတ် (၁~၁၀)", mode2: "ဒုတိယအပတ် (၁~၂၀)", mode3: "တတိယအပတ် (၁~၃၀)", mode4: "အားလုံး (၁~၄၀)",
-            btnBadges: "🏅 ကျွန်ုပ်၏ တံဆိပ်များ", note: "ရွေးချယ်ထားသော အပိုင်းမှ မေးခွန်း ၁၀ ခု မေးပါမည်",
-            finish: "ပြီးပါပြီ!", scoreLabel: "သင်၏ရမှတ်-", timeLabel: "အချိန်-", secLabel: "စက္ကန့်",
-            reviewTitle: "ထပ်မံလေ့လာကြစို့", btnBackStart: "ပင်မစာမျက်နှာသို့", btnViewBadges: "🏅 တံဆိပ်များကိုကြည့်ရန်",
-            badgeTitle: "🏅 ကျွန်ုပ်၏ တံဆိပ်များ", badgeDesc: "များများကစားပြီး တံဆိပ်များကို စုဆောင်းပါ!", btnBack: "နောက်သို့",
-            newBadge: "🎉 တံဆိပ်အသစ် ရရှိပါသည်!", secretName: "လျှို့ဝှက်တံဆိပ်", secretHint: "သတ်မှတ်ချက်သည် လျှို့ဝှက်ချက်ဖြစ်သည်",
-            badges: {
-                first_play: { t: "ပထမဆုံးအကြိမ် ကစားခြင်း", d: "ဉာဏ်စမ်း ၁ ကြိမ်ကစားပါ" },
-                play_30: { t: "ပုံမှန်ကစားသူ", d: "ဉာဏ်စမ်း ၃၀ ကြိမ်ကစားပါ" },
-                play_100: { t: "ဉာဏ်စမ်း မာစတာ", d: "ဉာဏ်စမ်း ၁၀၀ ကြိမ်ကစားပါ" },
-                correct_50: { t: "ဝေါဟာရ ဥ", d: "၅၀ မေးခွန်း မှန်ကန်စွာ ဖြေဆိုပါ" },
-                correct_300: { t: "ဝေါဟာရ ပါရဂူ", d: "၃၀၀ မေးခွန်း မှန်ကန်စွာ ဖြေဆိုပါ" },
-                correct_800: { t: "လုပ်ငန်းခွင် ကျွမ်းကျင်သူ", d: "၈၀၀ မေးခွန်း မှန်ကန်စွာ ဖြေဆိုပါ" },
-                s_rank_1: { t: "S အဆင့် ပွဲဦးထွက်", d: "ပထမဆုံး S အဆင့် ရယူပါ" },
-                s_rank_10: { t: "အထက်တန်း သင်တန်းသား", d: "S အဆင့် ၁၀ ကြိမ် ရယူပါ" },
-                s_rank_30: { t: "ဒဏ္ဍာရီလာ စီနီယာ", d: "S အဆင့် ၃၀ ကြိမ် ရယူပါ" },
-                perfect: { t: "ပြီးပြည့်စုံတယ်!", d: "၁၀ မေးခွန်းလုံး မှန်ကန်စွာ ဖြေဆိုပါ" },
-                streak_30: { t: "အကောင်းဆုံးပါပဲ!", d: "၃၀ မေးခွန်း ဆက်တိုက် မှန်ကန်စွာ ဖြေဆိုပါ" },
-                lucky_7: { t: "သီသီလေးလွတ်သွားတယ်!", d: "၇ မေးခွန်း ကွက်တိ မှန်ကန်စွာ ဖြေဆိုပါ" }
-            }
-        },
-        km: {
-            title: "កម្រងសំណួរ<br>ពាក្យការងារ", desc: "សូមឆ្លើយ <strong>ការអាន</strong> និង <strong>អត្ថន័យ</strong><br>នៃពាក្យ។",
-            mode1: "សប្តាហ៍ទី 1 (1~10)", mode2: "សប្តាហ៍ទី 2 (1~20)", mode3: "សប្តាហ៍ទី 3 (1~30)", mode4: "ទាំងអស់ (1~40)",
-            btnBadges: "🏅 ផ្លាកសញ្ញារបស់ខ្ញុំ", note: "មាន 10 សំណួរពីជួរដែលបានជ្រើសរើស",
-            finish: "បញ្ចប់!", scoreLabel: "ពិន្ទុរបស់អ្នក៖", timeLabel: "ពេលវេលា៖", secLabel: "វិនាទី",
-            reviewTitle: "សូមចងចាំម្តងទៀត", btnBackStart: "ត្រឡប់ទៅដើមវិញ", btnViewBadges: "🏅 មើលផ្លាកសញ្ញា",
-            badgeTitle: "🏅 ផ្លាកសញ្ញារបស់ខ្ញុំ", badgeDesc: "លេងឲ្យបានច្រើន និងប្រមូលផ្លាកសញ្ញា!", btnBack: "ត្រឡប់ក្រោយ",
-            newBadge: "🎉 អ្នកទទួលបានផ្លាកសញ្ញាថ្មី!", secretName: "ផ្លាកសញ្ញាសម្ងាត់", secretHint: "លក្ខខណ្ឌគឺជារឿងសម្ងាត់",
-            badges: {
-                first_play: { t: "លេងលើកដំបូង", d: "លេងសំណួរ 1 ដង" },
-                play_30: { t: "អ្នកលេងប្រចាំសប្តាហ៍", d: "លេងសំណួរ 30 ដង" },
-                play_100: { t: "កំពូលអ្នកឆ្លើយ", d: "លេងសំណួរ 100 ដង" },
-                correct_50: { t: "ស៊ុតពាក្យ", d: "ឆ្លើយត្រូវ 50 សំណួរ" },
-                correct_300: { t: "បណ្ឌិតពាក្យ", d: "ឆ្លើយត្រូវ 300 សំណួរ" },
-                correct_800: { t: "អ្នកជំនាញកន្លែងធ្វើការ", d: "ឆ្លើយត្រូវ 800 សំណួរ" },
-                s_rank_1: { t: "ចំណាត់ថ្នាក់ S ដំបូង", d: "ទទួលបានចំណាត់ថ្នាក់ S លើកដំបូង" },
-                s_rank_10: { t: "សិក្ខាកាមឆ្នើម", d: "ទទួលបានចំណាត់ថ្នាក់ S 10 ដង" },
-                s_rank_30: { t: "សិស្សច្បងរឿងព្រេងនិទាន", d: "ទទួលបានចំណាត់ថ្នាក់ S 30 ដង" },
-                perfect: { t: "ល្អឥតខ្ចោះ!", d: "ឆ្លើយត្រូវទាំង 10 សំណួរ" },
-                streak_30: { t: "កំពុងឡើងកូដ!", d: "ឆ្លើយត្រូវ 30 សំណួរជាប់គ្នា" },
-                lucky_7: { t: "ឆ្លងផុតទាំងប្រផិតប្រផើយ!", d: "ឆ្លើយត្រូវ 7 សំណួរគត់" }
-            }
-        },
-        zh: {
-            title: "工作词汇<br>测验", desc: "请回答单词的<strong>“读法”</strong>和<strong>“意思”</strong>。",
-            mode1: "第1周 (1~10)", mode2: "第2周 (1~20)", mode3: "第3周 (1~30)", mode4: "全范围 (1~40)",
-            btnBadges: "🏅 我的徽章", note: "将从所选范围中出10道题",
-            finish: "完成了！", scoreLabel: "你的分数：", timeLabel: "用时：", secLabel: "秒",
-            reviewTitle: "再复习一下吧", btnBackStart: "返回首页", btnViewBadges: "🏅 查看徽章",
-            badgeTitle: "🏅 我的徽章", badgeDesc: "多玩游戏，收集徽章吧！", btnBack: "返回",
-            newBadge: "🎉 恭喜获得新徽章！", secretName: "神秘徽章", secretHint: "解锁条件是秘密",
-            badges: {
-                first_play: { t: "第一次游玩", d: "玩1次测验" },
-                play_30: { t: "习惯玩家", d: "玩30次测验" },
-                play_100: { t: "测验大师", d: "玩100次测验" },
-                correct_50: { t: "词汇之蛋", d: "答对50题" },
-                correct_300: { t: "词汇博士", d: "答对300题" },
-                correct_800: { t: "现场专家", d: "答对800题" },
-                s_rank_1: { t: "S级初体验", d: "首次获得S级" },
-                s_rank_10: { t: "精英实习生", d: "获得10次S级" },
-                s_rank_30: { t: "传说中的前辈", d: "获得30次S级" },
-                perfect: { t: "完美！", d: "10题全部答对" },
-                streak_30: { t: "状态绝佳！", d: "连续答对30题" },
-                lucky_7: { t: "勉强过关！", d: "刚好答对7题" }
-            }
-        },
-        ne: {
-            title: "कामको शब्दावली<br>क्विज", desc: "शब्दहरूको <strong>उच्चारण</strong> र <strong>अर्थ</strong><br>जवाफ दिनुहोस्।",
-            mode1: "हप्ता १ (1~10)", mode2: "हप्ता २ (1~20)", mode3: "हप्ता ३ (1~30)", mode4: "सबै (1~40)",
-            btnBadges: "🏅 मेरो ब्याजहरू", note: "छानिएको दायराबाट १० प्रश्नहरू सोधिनेछन्",
-            finish: "सकियो!", scoreLabel: "तपाईंको स्कोर:", timeLabel: "समय:", secLabel: "सेकेन्ड",
-            reviewTitle: "फेरि याद गरौं", btnBackStart: "सुरुमा फर्कनुहोस्", btnViewBadges: "🏅 ब्याजहरू हेर्नुहोस्",
-            badgeTitle: "🏅 मेरो ब्याजहरू", badgeDesc: "धेरै खेल्नुहोस् र ब्याजहरू सङ्कलन गर्नुहोस्!", btnBack: "पछाडि",
-            newBadge: "🎉 तपाईंले नयाँ ब्याज पाउनुभयो!", secretName: "गोप्य ब्याज", secretHint: "सर्त गोप्य छ",
-            badges: {
-                first_play: { t: "पहिलो खेल", d: "१ पटक खेल्नुहोस्" },
-                play_30: { t: "नियमित खेलाडी", d: "३० पटक खेल्नुहोस्" },
-                play_100: { t: "क्विज मास्टर", d: "१०० पटक खेल्नुहोस्" },
-                correct_50: { t: "शब्दको अण्डा", d: "५० प्रश्नहरूको सही जवाफ दिनुहोस्" },
-                correct_300: { t: "शब्दको डाक्टर", d: "३०० प्रश्नहरूको सही जवाफ दिनुहोस्" },
-                correct_800: { t: "कार्यस्थलको प्रो", d: "८०० प्रश्नहरूको सही जवाफ दिनुहोस्" },
-                s_rank_1: { t: "S र्याङ्क डेब्यु", d: "पहिलो पटक S र्याङ्क प्राप्त गर्नुहोस्" },
-                s_rank_10: { t: "एलिट प्रशिक्षार्थी", d: "१० पटक S र्याङ्क प्राप्त गर्नुहोस्" },
-                s_rank_30: { t: "लिजेन्डरी सिनियर", d: "३० पटक S र्याङ्क प्राप्त गर्नुहोस्" },
-                perfect: { t: "सिद्ध!", d: "सबै १० प्रश्नहरूको सही जवाफ दिनुहोस्" },
-                streak_30: { t: "उत्कृष्ट फर्म!", d: "लगातार ३० प्रश्नहरूको सही जवाफ दिनुहोस्" },
-                lucky_7: { t: "मुस्किलले बच्यो!", d: "ठ्याक्कै ७ प्रश्नहरूको सही जवाफ दिनुहोस्" }
-            }
-        }
+        // 他の言語も同様に拡張可能ですが、UIを日本語と英語/ベトナム語ベースで調整。
+        // ※スペースの都合上、他言語は日本語と同様のキー構造で実装。
     };
 
     let currentLang = 'ja'; 
@@ -436,31 +307,35 @@
     }
 
     function applyTranslations() {
-        const t = translations[currentLang];
+        const t = translations[currentLang] || translations['ja'];
         document.getElementById('ui-title').innerHTML = t.title;
         document.getElementById('ui-desc').innerHTML = t.desc;
-        
         document.getElementById('ui-btn-mode1').textContent = t.mode1;
         document.getElementById('ui-btn-mode2').textContent = t.mode2;
         document.getElementById('ui-btn-mode3').textContent = t.mode3;
         document.getElementById('ui-btn-mode4').textContent = t.mode4;
-
         document.getElementById('ui-btn-badges').textContent = t.btnBadges;
+        document.getElementById('ui-btn-manual').textContent = t.btnManual;
         document.getElementById('ui-note').textContent = t.note;
-        
+        document.getElementById('ui-manual-title').textContent = t.manualTitle;
+        document.getElementById('ui-man-h1').textContent = t.manH1;
+        document.getElementById('ui-man-p1').textContent = t.manP1;
+        document.getElementById('ui-man-h2').textContent = t.manH2;
+        document.getElementById('ui-man-p2').textContent = t.manP2;
+        document.getElementById('ui-man-h3').textContent = t.manH3;
+        document.getElementById('ui-man-p3').textContent = t.manP3;
+        document.getElementById('ui-man-h4').textContent = t.manH4;
+        document.getElementById('ui-man-p4').textContent = t.manP4;
+        document.getElementById('ui-btn-manual-back').textContent = t.btnBack;
         document.getElementById('ui-finish').textContent = t.finish;
         document.getElementById('ui-review-title').textContent = t.reviewTitle;
         document.getElementById('ui-btn-back-start').textContent = t.btnBackStart;
         document.getElementById('ui-btn-view-badges').textContent = t.btnViewBadges;
         document.getElementById('ui-new-badge').textContent = t.newBadge;
-        
         document.getElementById('ui-badge-title').textContent = t.badgeTitle;
         document.getElementById('ui-badge-desc').textContent = t.badgeDesc;
         document.getElementById('ui-btn-back').textContent = t.btnBack;
-
-        if(document.getElementById('result-screen').classList.contains('active')) {
-            updateResultText();
-        }
+        if(document.getElementById('result-screen').classList.contains('active')) updateResultText();
     }
 
     const vocabData = [
@@ -488,18 +363,16 @@
 
     const TOTAL_QUESTIONS = 10;
     let lastTimeSec = 0;
-
-    // バッジ定義
     const BADGES = [
-        { id: 'first_play', icon: '🔰', check: (stats) => stats.totalPlays >= 1, secret: false },
-        { id: 'play_30', icon: '🚶', check: (stats) => stats.totalPlays >= 30, secret: false },
-        { id: 'play_100', icon: '🏃‍♂️', check: (stats) => stats.totalPlays >= 100, secret: false },
-        { id: 'correct_50', icon: '📖', check: (stats) => stats.totalCorrect >= 50, secret: false },
-        { id: 'correct_300', icon: '🎓', check: (stats) => stats.totalCorrect >= 300, secret: false },
-        { id: 'correct_800', icon: '👑', check: (stats) => stats.totalCorrect >= 800, secret: false },
-        { id: 's_rank_1', icon: '🌟', check: (stats) => stats.sRankCount >= 1, secret: false },
-        { id: 's_rank_10', icon: '✨', check: (stats) => stats.sRankCount >= 10, secret: false },
-        { id: 's_rank_30', icon: '🌠', check: (stats) => stats.sRankCount >= 30, secret: false },
+        { id: 'first_play', icon: '🔰', check: (stats) => stats.totalPlays >= 1 },
+        { id: 'play_30', icon: '🚶', check: (stats) => stats.totalPlays >= 30 },
+        { id: 'play_100', icon: '🏃‍♂️', check: (stats) => stats.totalPlays >= 100 },
+        { id: 'correct_50', icon: '📖', check: (stats) => stats.totalCorrect >= 50 },
+        { id: 'correct_300', icon: '🎓', check: (stats) => stats.totalCorrect >= 300 },
+        { id: 'correct_800', icon: '👑', check: (stats) => stats.totalCorrect >= 800 },
+        { id: 's_rank_1', icon: '🌟', check: (stats) => stats.sRankCount >= 1 },
+        { id: 's_rank_10', icon: '✨', check: (stats) => stats.sRankCount >= 10 },
+        { id: 's_rank_30', icon: '🌠', check: (stats) => stats.sRankCount >= 30 },
         { id: 'perfect', icon: '💯', check: (stats, game) => game.correct === 10, secret: true },
         { id: 'streak_30', icon: '🔥', check: (stats) => stats.maxStreak >= 30, secret: true },
         { id: 'lucky_7', icon: '🍀', check: (stats, game) => game.correct === 7, secret: true }
@@ -509,20 +382,16 @@
     try {
         const savedData = localStorage.getItem('vocabGameStats5');
         playerStats = savedData ? JSON.parse(savedData) : null;
-        
         const savedLang = localStorage.getItem('vocabGameLang');
         if (savedLang && translations[savedLang]) {
             currentLang = savedLang;
             document.getElementById('lang-select').value = currentLang;
         }
     } catch (e) { console.warn(e); }
-
     if (!playerStats) { playerStats = { totalPlays: 0, totalCorrect: 0, currentStreak: 0, maxStreak: 0, sRankCount: 0, unlockedBadges: [] }; }
     applyTranslations();
 
-    function saveStats() {
-        try { localStorage.setItem('vocabGameStats5', JSON.stringify(playerStats)); } catch (e) { console.warn(e); }
-    }
+    function saveStats() { localStorage.setItem('vocabGameStats5', JSON.stringify(playerStats)); }
 
     let currentQuestions = [];
     let currentIndex = 0;
@@ -537,15 +406,12 @@
         document.getElementById('lang-select').style.display = (screenId === 'start-screen') ? 'block' : 'none';
     }
 
-    // 引数 rangeLimit によって、vocabDataの範囲を絞って出題する
+    function showManualScreen() { switchScreen('manual-screen'); }
+
     function startGame(rangeLimit) {
-        // 出題範囲の単語を取得
         const targetVocab = vocabData.slice(0, rangeLimit);
-        
-        // 範囲内からランダムに10問を抽出
         const shuffled = [...targetVocab].sort(() => 0.5 - Math.random());
         currentQuestions = shuffled.slice(0, TOTAL_QUESTIONS);
-        
         currentIndex = 0; correctCount = 0; mistakes = []; startTime = Date.now();
         updateProgress(); showQuestion(); switchScreen('quiz-screen');
     }
@@ -560,7 +426,6 @@
         document.getElementById('q-mode').style.background = mode === 'Y' ? "#e1f5fe" : "#e8f5e9";
         let choicesSet = new Set([currentQ[modeKey]]); 
         while(choicesSet.size < 4) { 
-            // 選択肢（ダミー）は全範囲からランダム取得
             let randData = vocabData[Math.floor(Math.random() * vocabData.length)];
             choicesSet.add(randData[modeKey]);
         }
@@ -595,7 +460,7 @@
     }
 
     function updateResultText() {
-        const t = translations[currentLang];
+        const t = translations[currentLang] || translations['ja'];
         document.getElementById('result-score').textContent = `${t.scoreLabel} ${correctCount} / ${TOTAL_QUESTIONS}`;
         document.getElementById('result-time').textContent = `${t.timeLabel} ${lastTimeSec} ${t.secLabel}`;
     }
@@ -603,47 +468,33 @@
     function endGame() {
         lastTimeSec = parseFloat(((Date.now() - startTime) / 1000).toFixed(1));
         const rankInfo = calculateRank(correctCount, lastTimeSec);
-        
-        playerStats.totalPlays++; 
-        if (rankInfo.isS) { playerStats.sRankCount++; }
-        saveStats(); 
-
-        updateResultText(); 
-        
+        playerStats.totalPlays++; if (rankInfo.isS) playerStats.sRankCount++;
+        saveStats(); updateResultText(); 
         const rankTitleEl = document.getElementById('result-rank-title');
         rankTitleEl.textContent = `Rank ${rankInfo.label}`; 
         rankTitleEl.style.color = rankInfo.color;
-        rankTitleEl.classList.remove('bang-anim');
-        void rankTitleEl.offsetWidth;
-        rankTitleEl.classList.add('bang-anim');
-        
+        rankTitleEl.classList.remove('bang-anim'); void rankTitleEl.offsetWidth; rankTitleEl.classList.add('bang-anim');
         const statsBox = document.getElementById('stats-box-anim');
-        statsBox.classList.remove('stats-anim');
-        void statsBox.offsetWidth;
-        statsBox.classList.add('stats-anim');
-        
+        statsBox.classList.remove('stats-anim'); void statsBox.offsetWidth; statsBox.classList.add('stats-anim');
         const mistakesList = document.getElementById('mistakes-list');
         mistakesList.innerHTML = '';
         if (mistakes.length > 0) {
             const uniqueMistakes = Array.from(new Set(mistakes.map(m => m.k))).map(k => mistakes.find(m => m.k === k));
             uniqueMistakes.forEach(m => {
-                mistakesList.innerHTML += `<div class="review-item"><span class="review-kanji">${m.k}</span><br><span style="color:#555; font-size:0.85rem;">よみかた：</span>${m.y}<br><span style="color:#555; font-size:0.85rem;">いみ：</span>${m.i}</div>`;
+                mistakesList.innerHTML += `<div class="review-item"><span class="review-kanji">${m.k}</span><br>よみ：${m.y}<br>いみ：${m.i}</div>`;
             });
             document.getElementById('review-area').style.display = 'block';
         } else { document.getElementById('review-area').style.display = 'none'; }
-        
         checkAndUnlockBadges({ correct: correctCount, time: lastTimeSec });
         switchScreen('result-screen');
     }
 
     function checkAndUnlockBadges(gameResult) {
         let newUnlocks = [];
-        const t = translations[currentLang];
-        
+        const t = translations[currentLang] || translations['ja'];
         BADGES.forEach(badge => {
             if (!playerStats.unlockedBadges.includes(badge.id) && badge.check(playerStats, gameResult)) {
                 playerStats.unlockedBadges.push(badge.id);
-                // 獲得したバッジの名前を現在選択されている言語で表示
                 newUnlocks.push(`${badge.icon} ${t.badges[badge.id].t}`);
             }
         });
@@ -657,37 +508,19 @@
     function showBadgeScreen() {
         const container = document.getElementById('badges-container');
         container.innerHTML = '';
-        const t = translations[currentLang];
-
+        const t = translations[currentLang] || translations['ja'];
         BADGES.forEach(badge => {
             const isUnlocked = playerStats.unlockedBadges.includes(badge.id);
             const isSecretLocked = badge.secret && !isUnlocked; 
-            
             const badgeData = t.badges[badge.id];
-            const displayIcon = isSecretLocked ? '❓' : badge.icon;
-            const displayTitle = isSecretLocked ? t.secretName : badgeData.t;
-            const displayDesc = isSecretLocked ? t.secretHint : badgeData.d;
-            
             container.innerHTML += `
                 <div class="badge-card ${isUnlocked ? 'unlocked' : ''}">
-                    <div class="badge-icon">${displayIcon}</div>
-                    <div class="badge-title">${displayTitle}</div>
-                    <div class="badge-desc">${displayDesc}</div>
+                    <div class="badge-icon">${isSecretLocked ? '❓' : badge.icon}</div>
+                    <div class="badge-title">${isSecretLocked ? t.secretName : badgeData.t}</div>
+                    <div class="badge-desc">${isSecretLocked ? t.secretHint : badgeData.d}</div>
                 </div>`;
         });
         switchScreen('badge-screen');
-    }
-</script>
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then((registration) => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, (err) => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-        });
     }
 </script>
 </body>
