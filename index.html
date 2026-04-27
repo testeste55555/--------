@@ -58,9 +58,28 @@
         }
         .btn:active { transform: translateY(4px); box-shadow: 0 0px 2px rgba(0,0,0,0.2); }
         
-        .btn-start { background-color: var(--primary); }
         .btn-badges { background-color: var(--warning); }
         .btn-back { background-color: #95a5a6; margin-top: 20px; }
+
+        /* モード選択グリッド */
+        .mode-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .btn-mode {
+            background-color: var(--primary);
+            color: white; font-size: 1rem; font-weight: bold;
+            border: none; border-radius: 12px; padding: 15px 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); cursor: pointer;
+            text-align: center; transition: transform 0.1s;
+            width: 100%; margin: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            line-height: 1.3;
+        }
+        .btn-mode:active { transform: translateY(4px); box-shadow: 0 0px 2px rgba(0,0,0,0.2); }
 
         /* クイズ画面 */
         .progress-bar { width: 100%; height: 10px; background-color: #ddd; border-radius: 5px; margin-bottom: 15px; margin-top: 20px; }
@@ -142,9 +161,16 @@
         <p id="ui-desc" style="color:#555; text-align:center; margin-bottom: 25px;">
             ことばの<strong>「よみかた」</strong>と<br><strong>「いみ」</strong>を こたえましょう。
         </p>
-        <button class="btn btn-start" id="ui-btn-start" onclick="startGame()">▶ はじめる</button>
+        
+        <div class="mode-grid">
+            <button class="btn-mode" id="ui-btn-mode1" onclick="startGame(10)">1週目 (1~10)</button>
+            <button class="btn-mode" id="ui-btn-mode2" onclick="startGame(20)">2週目 (1~20)</button>
+            <button class="btn-mode" id="ui-btn-mode3" onclick="startGame(30)">3週目 (1~30)</button>
+            <button class="btn-mode" id="ui-btn-mode4" onclick="startGame(40)">全範囲 (1~40)</button>
+        </div>
+
         <button class="btn btn-badges" id="ui-btn-badges" onclick="showBadgeScreen()">🏅 わたしの バッジ</button>
-        <p id="ui-note" style="color:#777; font-size:0.85rem; margin-top:20px; text-align:center;">ぜんぶで 40の ことばから 10もん でます</p>
+        <p id="ui-note" style="color:#777; font-size:0.85rem; margin-top:10px; text-align:center;">えらんだ はんいから 10もん でます</p>
     </div>
 
     <div id="quiz-screen" class="screen">
@@ -176,7 +202,7 @@
                 <div id="mistakes-list"></div>
             </div>
             
-            <button class="btn btn-start stats-anim" id="ui-btn-back-start" onclick="switchScreen('start-screen')">はじめの がめんへ</button>
+            <button class="btn btn-start stats-anim" style="background-color:var(--primary);" id="ui-btn-back-start" onclick="switchScreen('start-screen')">はじめの がめんへ</button>
             <button class="btn btn-badges stats-anim" id="ui-btn-view-badges" onclick="showBadgeScreen()">🏅 バッジを みる</button>
         </div>
     </div>
@@ -190,11 +216,12 @@
 </div>
 
 <script>
-    // 翻訳辞書データ（UI + バッジのタイトル・説明）
+    // 翻訳辞書データ
     const translations = {
         ja: {
             title: "しごとの ことば<br>クイズ", desc: "ことばの<strong>「よみかた」</strong>と<br><strong>「いみ」</strong>を こたえましょう。",
-            btnStart: "▶ はじめる", btnBadges: "🏅 わたしの バッジ", note: "ぜんぶで 40の ことばから 10もん でます",
+            mode1: "1週目 (1~10)", mode2: "2週目 (1~20)", mode3: "3週目 (1~30)", mode4: "全範囲 (1~40)",
+            btnBadges: "🏅 わたしの バッジ", note: "えらんだ はんいから 10もん でます",
             finish: "おわりました！", scoreLabel: "あなたのスコア：", timeLabel: "タイム：", secLabel: "秒",
             reviewTitle: "もういちど おぼえましょう", btnBackStart: "はじめの がめんへ", btnViewBadges: "🏅 バッジを みる",
             badgeTitle: "🏅 わたしの バッジ", badgeDesc: "たくさん あそんで、バッジを あつめましょう！", btnBack: "もどる",
@@ -216,7 +243,8 @@
         },
         vi: {
             title: "Câu đố từ vựng<br>Công việc", desc: "Hãy trả lời <strong>Cách đọc</strong> và <strong>Ý nghĩa</strong><br>của các từ vựng.",
-            btnStart: "▶ Bắt đầu", btnBadges: "🏅 Huy hiệu của tôi", note: "Sẽ có 10 câu hỏi từ tổng số 40 từ vựng",
+            mode1: "Tuần 1 (1~10)", mode2: "Tuần 2 (1~20)", mode3: "Tuần 3 (1~30)", mode4: "Tất cả (1~40)",
+            btnBadges: "🏅 Huy hiệu của tôi", note: "Sẽ có 10 câu hỏi từ phạm vi đã chọn",
             finish: "Hoàn thành!", scoreLabel: "Điểm của bạn:", timeLabel: "Thời gian:", secLabel: "giây",
             reviewTitle: "Hãy ghi nhớ lại lần nữa", btnBackStart: "Về màn hình chính", btnViewBadges: "🏅 Xem huy hiệu",
             badgeTitle: "🏅 Huy hiệu của tôi", badgeDesc: "Hãy chơi thật nhiều và thu thập huy hiệu nhé!", btnBack: "Quay lại",
@@ -238,7 +266,8 @@
         },
         id: {
             title: "Kuis Kosakata<br>Pekerjaan", desc: "Mari jawab <strong>Cara baca</strong> dan <strong>Arti</strong><br>dari kata-kata tersebut.",
-            btnStart: "▶ Mulai", btnBadges: "🏅 Lencana Saya", note: "10 pertanyaan akan muncul dari total 40 kata",
+            mode1: "Minggu 1 (1~10)", mode2: "Minggu 2 (1~20)", mode3: "Minggu 3 (1~30)", mode4: "Semua (1~40)",
+            btnBadges: "🏅 Lencana Saya", note: "10 pertanyaan akan muncul dari rentang yang dipilih",
             finish: "Selesai!", scoreLabel: "Skor Anda:", timeLabel: "Waktu:", secLabel: "detik",
             reviewTitle: "Mari kita ingat lagi", btnBackStart: "Kembali ke awal", btnViewBadges: "🏅 Lihat Lencana",
             badgeTitle: "🏅 Lencana Saya", badgeDesc: "Mainkan terus dan kumpulkan lencananya!", btnBack: "Kembali",
@@ -260,7 +289,8 @@
         },
         tl: {
             title: "Pagsusulit sa<br>Salitang Trabaho", desc: "Sagutin ang <strong>Pagbasa</strong> at <strong>Kahulugan</strong><br>ng mga salita.",
-            btnStart: "▶ Simulan", btnBadges: "🏅 Aking mga Badge", note: "10 tanong mula sa kabuuang 40 na salita",
+            mode1: "Linggo 1 (1~10)", mode2: "Linggo 2 (1~20)", mode3: "Linggo 3 (1~30)", mode4: "Lahat (1~40)",
+            btnBadges: "🏅 Aking mga Badge", note: "10 tanong mula sa napiling saklaw",
             finish: "Tapos na!", scoreLabel: "Ang iyong Iskor:", timeLabel: "Oras:", secLabel: "segundo",
             reviewTitle: "Kabisaduhin natin ulit", btnBackStart: "Bumalik sa Simula", btnViewBadges: "🏅 Tingnan ang Badge",
             badgeTitle: "🏅 Aking mga Badge", badgeDesc: "Maglaro ng marami at mangolekta ng mga badge!", btnBack: "Bumalik",
@@ -282,7 +312,8 @@
         },
         th: {
             title: "ควิซคำศัพท์<br>การทำงาน", desc: "มาตอบ <strong>คำอ่าน</strong> และ <strong>ความหมาย</strong><br>ของคำศัพท์กันเถอะ",
-            btnStart: "▶ เริ่มเลย", btnBadges: "🏅 เหรียญตราของฉัน", note: "มี 10 คำถามจากคำศัพท์ทั้งหมด 40 คำ",
+            mode1: "สัปดาห์ที่ 1 (1~10)", mode2: "สัปดาห์ที่ 2 (1~20)", mode3: "สัปดาห์ที่ 3 (1~30)", mode4: "ทั้งหมด (1~40)",
+            btnBadges: "🏅 เหรียญตราของฉัน", note: "มี 10 คำถามจากขอบเขตที่เลือก",
             finish: "เสร็จสิ้น!", scoreLabel: "คะแนนของคุณ:", timeLabel: "เวลา:", secLabel: "วินาที",
             reviewTitle: "มาทบทวนกันอีกครั้ง", btnBackStart: "กลับสู่หน้าแรก", btnViewBadges: "🏅 ดูเหรียญตรา",
             badgeTitle: "🏅 เหรียญตราของฉัน", badgeDesc: "เล่นเยอะๆ เพื่อสะสมเหรียญตรากันเถอะ!", btnBack: "ย้อนกลับ",
@@ -304,7 +335,8 @@
         },
         my: {
             title: "အလုပ်ခွင် ဝေါဟာရ<br>ဉာဏ်စမ်း", desc: "စကားလုံးများ၏ <strong>အသံထွက်</strong> နှင့် <strong>အဓိပ္ပါယ်</strong> ကို ဖြေဆိုကြစို့။",
-            btnStart: "▶ စတင်ရန်", btnBadges: "🏅 ကျွန်ုပ်၏ တံဆိပ်များ", note: "စုစုပေါင်း စကားလုံး ၄၀ မှ မေးခွန်း ၁၀ ခု မေးပါမည်",
+            mode1: "ပထမအပတ် (၁~၁၀)", mode2: "ဒုတိယအပတ် (၁~၂၀)", mode3: "တတိယအပတ် (၁~၃၀)", mode4: "အားလုံး (၁~၄၀)",
+            btnBadges: "🏅 ကျွန်ုပ်၏ တံဆိပ်များ", note: "ရွေးချယ်ထားသော အပိုင်းမှ မေးခွန်း ၁၀ ခု မေးပါမည်",
             finish: "ပြီးပါပြီ!", scoreLabel: "သင်၏ရမှတ်-", timeLabel: "အချိန်-", secLabel: "စက္ကန့်",
             reviewTitle: "ထပ်မံလေ့လာကြစို့", btnBackStart: "ပင်မစာမျက်နှာသို့", btnViewBadges: "🏅 တံဆိပ်များကိုကြည့်ရန်",
             badgeTitle: "🏅 ကျွန်ုပ်၏ တံဆိပ်များ", badgeDesc: "များများကစားပြီး တံဆိပ်များကို စုဆောင်းပါ!", btnBack: "နောက်သို့",
@@ -326,7 +358,8 @@
         },
         km: {
             title: "កម្រងសំណួរ<br>ពាក្យការងារ", desc: "សូមឆ្លើយ <strong>ការអាន</strong> និង <strong>អត្ថន័យ</strong><br>នៃពាក្យ។",
-            btnStart: "▶ ចាប់ផ្តើម", btnBadges: "🏅 ផ្លាកសញ្ញារបស់ខ្ញុំ", note: "មាន 10 សំណួរពីពាក្យសរុប 40",
+            mode1: "សប្តាហ៍ទី 1 (1~10)", mode2: "សប្តាហ៍ទី 2 (1~20)", mode3: "សប្តាហ៍ទី 3 (1~30)", mode4: "ទាំងអស់ (1~40)",
+            btnBadges: "🏅 ផ្លាកសញ្ញារបស់ខ្ញុំ", note: "មាន 10 សំណួរពីជួរដែលបានជ្រើសរើស",
             finish: "បញ្ចប់!", scoreLabel: "ពិន្ទុរបស់អ្នក៖", timeLabel: "ពេលវេលា៖", secLabel: "វិនាទី",
             reviewTitle: "សូមចងចាំម្តងទៀត", btnBackStart: "ត្រឡប់ទៅដើមវិញ", btnViewBadges: "🏅 មើលផ្លាកសញ្ញា",
             badgeTitle: "🏅 ផ្លាកសញ្ញារបស់ខ្ញុំ", badgeDesc: "លេងឲ្យបានច្រើន និងប្រមូលផ្លាកសញ្ញា!", btnBack: "ត្រឡប់ក្រោយ",
@@ -348,7 +381,8 @@
         },
         zh: {
             title: "工作词汇<br>测验", desc: "请回答单词的<strong>“读法”</strong>和<strong>“意思”</strong>。",
-            btnStart: "▶ 开始", btnBadges: "🏅 我的徽章", note: "将从40个单词中出10道题",
+            mode1: "第1周 (1~10)", mode2: "第2周 (1~20)", mode3: "第3周 (1~30)", mode4: "全范围 (1~40)",
+            btnBadges: "🏅 我的徽章", note: "将从所选范围中出10道题",
             finish: "完成了！", scoreLabel: "你的分数：", timeLabel: "用时：", secLabel: "秒",
             reviewTitle: "再复习一下吧", btnBackStart: "返回首页", btnViewBadges: "🏅 查看徽章",
             badgeTitle: "🏅 我的徽章", badgeDesc: "多玩游戏，收集徽章吧！", btnBack: "返回",
@@ -370,7 +404,8 @@
         },
         ne: {
             title: "कामको शब्दावली<br>क्विज", desc: "शब्दहरूको <strong>उच्चारण</strong> र <strong>अर्थ</strong><br>जवाफ दिनुहोस्।",
-            btnStart: "▶ सुरु गर्नुहोस्", btnBadges: "🏅 मेरो ब्याजहरू", note: "कुल ४० शब्दहरूबाट १० प्रश्नहरू सोधिनेछन्",
+            mode1: "हप्ता १ (1~10)", mode2: "हप्ता २ (1~20)", mode3: "हप्ता ३ (1~30)", mode4: "सबै (1~40)",
+            btnBadges: "🏅 मेरो ब्याजहरू", note: "छानिएको दायराबाट १० प्रश्नहरू सोधिनेछन्",
             finish: "सकियो!", scoreLabel: "तपाईंको स्कोर:", timeLabel: "समय:", secLabel: "सेकेन्ड",
             reviewTitle: "फेरि याद गरौं", btnBackStart: "सुरुमा फर्कनुहोस्", btnViewBadges: "🏅 ब्याजहरू हेर्नुहोस्",
             badgeTitle: "🏅 मेरो ब्याजहरू", badgeDesc: "धेरै खेल्नुहोस् र ब्याजहरू सङ्कलन गर्नुहोस्!", btnBack: "पछाडि",
@@ -404,7 +439,12 @@
         const t = translations[currentLang];
         document.getElementById('ui-title').innerHTML = t.title;
         document.getElementById('ui-desc').innerHTML = t.desc;
-        document.getElementById('ui-btn-start').textContent = t.btnStart;
+        
+        document.getElementById('ui-btn-mode1').textContent = t.mode1;
+        document.getElementById('ui-btn-mode2').textContent = t.mode2;
+        document.getElementById('ui-btn-mode3').textContent = t.mode3;
+        document.getElementById('ui-btn-mode4').textContent = t.mode4;
+
         document.getElementById('ui-btn-badges').textContent = t.btnBadges;
         document.getElementById('ui-note').textContent = t.note;
         
@@ -449,7 +489,7 @@
     const TOTAL_QUESTIONS = 10;
     let lastTimeSec = 0;
 
-    // バッジ定義（言語部分は翻訳オブジェクトから取得するため、IDと条件のみを定義）
+    // バッジ定義
     const BADGES = [
         { id: 'first_play', icon: '🔰', check: (stats) => stats.totalPlays >= 1, secret: false },
         { id: 'play_30', icon: '🚶', check: (stats) => stats.totalPlays >= 30, secret: false },
@@ -497,9 +537,15 @@
         document.getElementById('lang-select').style.display = (screenId === 'start-screen') ? 'block' : 'none';
     }
 
-    function startGame() {
-        const shuffled = [...vocabData].sort(() => 0.5 - Math.random());
+    // 引数 rangeLimit によって、vocabDataの範囲を絞って出題する
+    function startGame(rangeLimit) {
+        // 出題範囲の単語を取得
+        const targetVocab = vocabData.slice(0, rangeLimit);
+        
+        // 範囲内からランダムに10問を抽出
+        const shuffled = [...targetVocab].sort(() => 0.5 - Math.random());
         currentQuestions = shuffled.slice(0, TOTAL_QUESTIONS);
+        
         currentIndex = 0; correctCount = 0; mistakes = []; startTime = Date.now();
         updateProgress(); showQuestion(); switchScreen('quiz-screen');
     }
@@ -514,6 +560,7 @@
         document.getElementById('q-mode').style.background = mode === 'Y' ? "#e1f5fe" : "#e8f5e9";
         let choicesSet = new Set([currentQ[modeKey]]); 
         while(choicesSet.size < 4) { 
+            // 選択肢（ダミー）は全範囲からランダム取得
             let randData = vocabData[Math.floor(Math.random() * vocabData.length)];
             choicesSet.add(randData[modeKey]);
         }
