@@ -1,15 +1,15 @@
-const CACHE_NAME = 'vocab-quiz-cache-v3'; // 数字を上げる
+const CACHE_NAME = 'vocab-quiz-cache-v3'; // 必ず数字を上げる！
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json',
-  // アイコン画像を用意したらここに追加します
-  // './icon-192.png',
-  // './icon-512.png'
+  './manifest.json'
 ];
 
 // インストール時にファイルをキャッシュ
 self.addEventListener('install', (event) => {
+  // ★追加：新しいバージョンが見つかったら、すぐに待機状態をスキップする
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -18,12 +18,11 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// ネットワークリクエスト時にキャッシュを返す（オフライン対応）
+// ネットワークリクエスト時にキャッシュを返す
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // キャッシュにあればそれを返し、なければネットワークから取得
         return response || fetch(event.request);
       })
   );
@@ -42,4 +41,6 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  // ★追加：すぐに新しいService Workerにコントロールを奪わせる
+  self.clients.claim();
 });
