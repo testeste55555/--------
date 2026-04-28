@@ -89,8 +89,7 @@
         
         .q-tag {
             display: inline-block; padding: 10px 24px; border-radius: 25px;
-            background: #e1f5fe; color: #0277bd; font-size: 1.8
-            rem; font-weight: bold; margin-bottom: 20px;
+            background: #e1f5fe; color: #0277bd; font-size: 1.4rem; font-weight: bold; margin-bottom: 20px;
         }
         
         .question-card { background: white; width: 100%; border-radius: 15px; padding: 30px 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; box-sizing: border-box; }
@@ -142,8 +141,8 @@
         .badge-card { background: white; border-radius: 10px; padding: 15px 10px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; opacity: 0.5; filter: grayscale(100%); display: flex; flex-direction: column; align-items: center; }
         .badge-card.unlocked { opacity: 1; filter: grayscale(0%); background: #fffbe6; border: 2px solid #ffd700; }
         .badge-icon { font-size: 2.2rem; margin-bottom: 5px; }
-        .badge-title { font-size: 0.85rem; font-weight: bold; color: #333; }
-        .badge-desc { font-size: 0.7rem; color: #666; }
+        .badge-title { font-size: 0.85rem; font-weight: bold; color: #333; line-height: 1.2; }
+        .badge-desc { font-size: 0.7rem; color: #666; line-height: 1.2; }
     </style>
 </head>
 <body>
@@ -245,6 +244,7 @@
 </div>
 
 <script>
+    // 完全版の全言語翻訳データ
     const translations = {
         ja: {
             title: "しごとの ことば<br>クイズ", desc: "ことばの<strong>「よみかた」</strong>と<br><strong>「いみ」</strong>を こたえましょう。",
@@ -294,8 +294,153 @@
                 streak_30: { t: "Tuyệt vời!", d: "Đúng 30 câu liên tiếp" }, lucky_7: { t: "May mắn 7", d: "Đúng chính xác 7 câu" }
             }
         },
-        // 他の言語も同様に拡張可能ですが、UIを日本語と英語/ベトナム語ベースで調整。
-        // ※スペースの都合上、他言語は日本語と同様のキー構造で実装。
+        id: {
+            title: "Kuis Kosakata<br>Pekerjaan", desc: "Mari jawab <strong>Cara baca</strong> dan <strong>Arti</strong>.",
+            mode1: "Minggu 1 (1~10)", mode2: "Minggu 2 (1~20)", mode3: "Minggu 3 (1~30)", mode4: "Semua (1~40)",
+            btnBadges: "🏅 Lencana Saya", btnManual: "📖 Cara Bermain", note: "10 pertanyaan dari rentang terpilih",
+            manualTitle: "📖 Cara Bermain", manH1: "1. Persiapan", manP1: "Pilih rentang kata. 10 soal akan muncul.",
+            manH2: "2. Aturan Kuis", manP2: "Pilih cara baca atau arti yang benar. Jawab cepat untuk naik peringkat!",
+            manH3: "3. Peringkat & Ulasan", manP3: "Peringkat (S, A, B, C) akan muncul di akhir. Anda bisa mengecek kata yang salah.",
+            manH4: "4. Kumpulkan Lencana", manP4: "Banyak bermain untuk dapat lencana. Kumpulkan semuanya!",
+            finish: "Selesai!", scoreLabel: "Skor:", timeLabel: "Waktu:", secLabel: "detik",
+            reviewTitle: "Mari kita ingat lagi", btnBackStart: "Kembali ke awal", btnViewBadges: "🏅 Lihat Lencana",
+            badgeTitle: "🏅 Lencana Saya", badgeDesc: "Mainkan terus dan kumpulkan lencananya!", btnBack: "Kembali",
+            newBadge: "🎉 Lencana baru!", secretName: "Rahasia", secretHint: "Syaratnya adalah rahasia",
+            badges: {
+                first_play: { t: "Main Pertama", d: "Main 1 kali" }, play_30: { t: "Pemain Rutin", d: "Main 30 kali" },
+                play_100: { t: "Master Kuis", d: "Main 100 kali" }, correct_50: { t: "Telur Kosakata", d: "Benar 50 soal" },
+                correct_300: { t: "Doktor Kosakata", d: "Benar 300 soal" }, correct_800: { t: "Pro Lapangan", d: "Benar 800 soal" },
+                s_rank_1: { t: "Debut Rank S", d: "Rank S pertama" }, s_rank_10: { t: "Pemagang Elit", d: "Rank S 10 kali" },
+                s_rank_30: { t: "Senior Legenda", d: "Rank S 30 kali" }, perfect: { t: "Sempurna!", d: "Benar semua 10 soal" },
+                streak_30: { t: "Luar Biasa!", d: "Benar 30 soal beruntun" }, lucky_7: { t: "Hampir Saja!", d: "Tepat 7 soal benar" }
+            }
+        },
+        tl: {
+            title: "Pagsusulit sa<br>Salitang Trabaho", desc: "Sagutin ang <strong>Pagbasa</strong> at <strong>Kahulugan</strong>.",
+            mode1: "Linggo 1 (1~10)", mode2: "Linggo 2 (1~20)", mode3: "Linggo 3 (1~30)", mode4: "Lahat (1~40)",
+            btnBadges: "🏅 Aking Badge", btnManual: "📖 Paano Maglaro", note: "10 tanong mula sa saklaw",
+            manualTitle: "📖 Paano Maglaro", manH1: "1. Paghahanda", manP1: "Piliin ang saklaw ng salita. 10 tanong ang lalabas.",
+            manH2: "2. Mga Tuntunin", manP2: "Piliin ang tamang pagbasa o kahulugan. Sumagot ng mabilis para tumaas ang rank!",
+            manH3: "3. Rank at Repaso", manP3: "Lalabas ang rank (S, A, B, C) sa dulo. Maaaring balikan ang mga maling sagot.",
+            manH4: "4. Mangolekta ng Badge", manP4: "Maglaro para makakuha ng badge. Kolektahin lahat!",
+            finish: "Tapos na!", scoreLabel: "Iskor:", timeLabel: "Oras:", secLabel: "seg",
+            reviewTitle: "Kabisaduhin natin ulit", btnBackStart: "Bumalik sa Simula", btnViewBadges: "🏅 Tingnan ang Badge",
+            badgeTitle: "🏅 Aking Badge", badgeDesc: "Maglaro para makakuha ng badge!", btnBack: "Bumalik",
+            newBadge: "🎉 Bagong badge!", secretName: "Lihim", secretHint: "Lihim ang kondisyon",
+            badges: {
+                first_play: { t: "Unang Laro", d: "Maglaro ng 1 beses" }, play_30: { t: "Lingguhang Laro", d: "Maglaro ng 30 beses" },
+                play_100: { t: "Quiz Master", d: "Maglaro ng 100 beses" }, correct_50: { t: "Itlog ng Salita", d: "Tama sa 50 tanong" },
+                correct_300: { t: "Dalubhasa", d: "Tama sa 300 tanong" }, correct_800: { t: "Propesyonal", d: "Tama sa 800 tanong" },
+                s_rank_1: { t: "S Rank Debut", d: "Unang S Rank" }, s_rank_10: { t: "Elite Trainee", d: "10 beses S Rank" },
+                s_rank_30: { t: "Alamat na Senior", d: "30 beses S Rank" }, perfect: { t: "Perpekto!", d: "Tama lahat ng 10" },
+                streak_30: { t: "Nasa Kondisyon!", d: "30 sunod na tama" }, lucky_7: { t: "Muntik Na!", d: "Eksaktong 7 tama" }
+            }
+        },
+        th: {
+            title: "ควิซคำศัพท์<br>การทำงาน", desc: "มาตอบ <strong>คำอ่าน</strong> และ <strong>ความหมาย</strong>กัน",
+            mode1: "สัปดาห์ 1 (1~10)", mode2: "สัปดาห์ 2 (1~20)", mode3: "สัปดาห์ 3 (1~30)", mode4: "ทั้งหมด (1~40)",
+            btnBadges: "🏅 เหรียญตรา", btnManual: "📖 วิธีการเล่น", note: "มี 10 คำถามจากขอบเขตที่เลือก",
+            manualTitle: "📖 วิธีการเล่น", manH1: "1. การเตรียมตัว", manP1: "เลือกขอบเขตคำศัพท์ จะมี 10 คำถาม",
+            manH2: "2. กฎของควิซ", manP2: "เลือกคำอ่านหรือความหมายที่ถูกต้อง ตอบเร็วเพื่อเพิ่มแรงก์!",
+            manH3: "3. แรงก์และการทบทวน", manP3: "เมื่อจบจะแสดงแรงก์ (S, A, B, C) สามารถดูคำที่ตอบผิดได้",
+            manH4: "4. สะสมเหรียญตรา", manP4: "เล่นเยอะๆ เพื่อรับเหรียญตรา สะสมให้ครบเถอะ!",
+            finish: "เสร็จสิ้น!", scoreLabel: "คะแนน:", timeLabel: "เวลา:", secLabel: "วินาที",
+            reviewTitle: "มาทบทวนกันอีกครั้ง", btnBackStart: "กลับสู่หน้าแรก", btnViewBadges: "🏅 ดูเหรียญตรา",
+            badgeTitle: "🏅 เหรียญตราของฉัน", badgeDesc: "เล่นเยอะๆ เพื่อสะสมเหรียญตรากัน!", btnBack: "ย้อนกลับ",
+            newBadge: "🎉 เหรียญตราใหม่!", secretName: "ความลับ", secretHint: "เงื่อนไขเป็นความลับ",
+            badges: {
+                first_play: { t: "เล่นครั้งแรก", d: "เล่น 1 ครั้ง" }, play_30: { t: "ผู้เล่นประจำ", d: "เล่น 30 ครั้ง" },
+                play_100: { t: "ควิซมาสเตอร์", d: "เล่น 100 ครั้ง" }, correct_50: { t: "ไข่คำศัพท์", d: "ตอบถูก 50 ข้อ" },
+                correct_300: { t: "ด็อกเตอร์", d: "ตอบถูก 300 ข้อ" }, correct_800: { t: "มืออาชีพ", d: "ตอบถูก 800 ข้อ" },
+                s_rank_1: { t: "เดบิวต์แรงก์ S", d: "ได้แรงก์ S ครั้งแรก" }, s_rank_10: { t: "ผู้ฝึกงานอีลีท", d: "ได้แรงก์ S 10 ครั้ง" },
+                s_rank_30: { t: "รุ่นพี่ในตำนาน", d: "ได้แรงก์ S 30 ครั้ง" }, perfect: { t: "เพอร์เฟกต์!", d: "ตอบถูกทั้งหมด 10 ข้อ" },
+                streak_30: { t: "ท็อปฟอร์ม!", d: "ถูก 30 ข้อติดกัน" }, lucky_7: { t: "รอดหวุดหวิด!", d: "ตอบถูก 7 ข้อพอดี" }
+            }
+        },
+        my: {
+            title: "အလုပ်ခွင် ဝေါဟာရ<br>ဉာဏ်စမ်း", desc: "<strong>အသံထွက်</strong> နှင့် <strong>အဓိပ္ပါယ်</strong> ကို ဖြေဆိုကြစို့။",
+            mode1: "ပတ် ၁ (၁~၁၀)", mode2: "ပတ် ၂ (၁~၂၀)", mode3: "ပတ် ၃ (၁~၃၀)", mode4: "အားလုံး (၁~၄၀)",
+            btnBadges: "🏅 တံဆိပ်များ", btnManual: "📖 ကစားနည်း", note: "မေးခွန်း ၁၀ ခု မေးပါမည်",
+            manualTitle: "📖 ကစားနည်း", manH1: "၁။ ပြင်ဆင်ခြင်း", manP1: "ဝေါဟာရ အပိုင်းကို ရွေးပါ။ မေးခွန်း ၁၀ ခု မေးပါမည်။",
+            manH2: "၂။ စည်းကမ်းများ", manP2: "အသံထွက် သို့မဟုတ် အဓိပ္ပါယ်ကို ရွေးပါ။ မြန်မြန်ဖြေရင် အဆင့်တက်မယ်!",
+            manH3: "၃။ အဆင့်နှင့် ပြန်ကြည့်ခြင်း", manP3: "အဆင့် (S, A, B, C) ပေါ်လာမယ်။ မှားတဲ့စကားလုံးတွေကို ပြန်စစ်လို့ရတယ်။",
+            manH4: "၄။ တံဆိပ်များ", manP4: "များများကစားပြီး တံဆိပ်တွေ ရယူပါ။ အကုန်စုဆောင်းလိုက်ပါ!",
+            finish: "ပြီးပါပြီ!", scoreLabel: "ရမှတ်-", timeLabel: "အချိန်-", secLabel: "စက္ကန့်",
+            reviewTitle: "ထပ်မံလေ့လာကြစို့", btnBackStart: "ပင်မသို့", btnViewBadges: "🏅 တံဆိပ်များကိုကြည့်ရန်",
+            badgeTitle: "🏅 ကျွန်ုပ်၏ တံဆိပ်များ", badgeDesc: "များများကစားပြီး တံဆိပ်များကို စုဆောင်းပါ!", btnBack: "နောက်သို့",
+            newBadge: "🎉 တံဆိပ်အသစ်!", secretName: "လျှို့ဝှက်ချက်", secretHint: "သတ်မှတ်ချက်ကို ဖုံးကွယ်ထားသည်",
+            badges: {
+                first_play: { t: "ပထမဆုံး ကစားခြင်း", d: "၁ ကြိမ်ကစားပါ" }, play_30: { t: "ပုံမှန်ကစားသူ", d: "၃၀ ကြိမ်ကစားပါ" },
+                play_100: { t: "မာစတာ", d: "၁၀၀ ကြိမ်ကစားပါ" }, correct_50: { t: "ဝေါဟာရ ဥ", d: "၅၀ မေးခွန်း မှန်ပါ" },
+                correct_300: { t: "ပါရဂူ", d: "၃၀၀ မေးခွန်း မှန်ပါ" }, correct_800: { t: "ကျွမ်းကျင်သူ", d: "၈၀၀ မေးခွန်း မှန်ပါ" },
+                s_rank_1: { t: "S အဆင့် ပွဲဦးထွက်", d: "S အဆင့် ၁ ကြိမ်" }, s_rank_10: { t: "အထက်တန်း သင်တန်းသား", d: "S အဆင့် ၁၀ ကြိမ်" },
+                s_rank_30: { t: "ဒဏ္ဍာရီ", d: "S အဆင့် ၃၀ ကြိမ်" }, perfect: { t: "ပြီးပြည့်စုံတယ်!", d: "၁၀ ခုလုံး မှန်ပါ" },
+                streak_30: { t: "အကောင်းဆုံးပါပဲ!", d: "၃၀ ဆက်တိုက် မှန်ပါ" }, lucky_7: { t: "သီသီလေး!", d: "၇ ခု ကွက်တိ မှန်ပါ" }
+            }
+        },
+        km: {
+            title: "កម្រងសំណួរ<br>ពាក្យការងារ", desc: "សូមឆ្លើយ <strong>ការអាន</strong> និង <strong>អត្ថន័យ</strong>។",
+            mode1: "សប្តាហ៍ 1 (1~10)", mode2: "សប្តាហ៍ 2 (1~20)", mode3: "សប្តាហ៍ 3 (1~30)", mode4: "ទាំងអស់ (1~40)",
+            btnBadges: "🏅 ផ្លាកសញ្ញា", btnManual: "📖 របៀបលេង", note: "មាន 10 សំណួរ",
+            manualTitle: "📖 របៀបលេង", manH1: "1. ការរៀបចំ", manP1: "ជ្រើសរើសជួរពាក្យ។ មាន 10 សំណួរ។",
+            manH2: "2. ច្បាប់", manP2: "ជ្រើសរើសការអាន ឬអត្ថន័យត្រឹមត្រូវ។ ឆ្លើយលឿនដើម្បីឡើងចំណាត់ថ្នាក់!",
+            manH3: "3. ចំណាត់ថ្នាក់ & ការរំលឹក", manP3: "ចំណាត់ថ្នាក់ (S, A, B, C) នឹងបង្ហាញនៅចុងបញ្ចប់។ អាចមើលពាក្យខុសឡើងវិញ។",
+            manH4: "4. ផ្លាកសញ្ញា", manP4: "លេងឲ្យបានច្រើនដើម្បីទទួលបានផ្លាកសញ្ញា។ ប្រមូលវាទាំងអស់!",
+            finish: "បញ្ចប់!", scoreLabel: "ពិន្ទុ៖", timeLabel: "ពេល៖", secLabel: "វិនាទី",
+            reviewTitle: "សូមចងចាំម្តងទៀត", btnBackStart: "ទៅដើមវិញ", btnViewBadges: "🏅 មើលផ្លាកសញ្ញា",
+            badgeTitle: "🏅 ផ្លាកសញ្ញារបស់ខ្ញុំ", badgeDesc: "លេងឲ្យបានច្រើន និងប្រមូលផ្លាកសញ្ញា!", btnBack: "ត្រឡប់ក្រោយ",
+            newBadge: "🎉 ផ្លាកសញ្ញាថ្មី!", secretName: "សម្ងាត់", secretHint: "លក្ខខណ្ឌគឺជារឿងសម្ងាត់",
+            badges: {
+                first_play: { t: "លេងលើកដំបូង", d: "លេង 1 ដង" }, play_30: { t: "អ្នកលេងប្រចាំ", d: "លេង 30 ដង" },
+                play_100: { t: "កំពូលអ្នកឆ្លើយ", d: "លេង 100 ដង" }, correct_50: { t: "ស៊ុតពាក្យ", d: "ត្រូវ 50 សំណួរ" },
+                correct_300: { t: "បណ្ឌិតពាក្យ", d: "ត្រូវ 300 សំណួរ" }, correct_800: { t: "អ្នកជំនាញ", d: "ត្រូវ 800 សំណួរ" },
+                s_rank_1: { t: "ចំណាត់ថ្នាក់ S ដំបូង", d: "បាន S លើកទី 1" }, s_rank_10: { t: "សិក្ខាកាមឆ្នើម", d: "បាន S 10 ដង" },
+                s_rank_30: { t: "រឿងព្រេងនិទាន", d: "បាន S 30 ដង" }, perfect: { t: "ល្អឥតខ្ចោះ!", d: "ត្រូវទាំង 10" },
+                streak_30: { t: "កំពុងឡើងកូដ!", d: "ត្រូវ 30 ជាប់គ្នា" }, lucky_7: { t: "ប្រផិតប្រផើយ!", d: "ត្រូវ 7 គត់" }
+            }
+        },
+        zh: {
+            title: "工作词汇<br>测验", desc: "请回答单词的<strong>“读法”</strong>和<strong>“意思”</strong>。",
+            mode1: "第1周 (1~10)", mode2: "第2周 (1~20)", mode3: "第3周 (1~30)", mode4: "全范围 (1~40)",
+            btnBadges: "🏅 我的徽章", btnManual: "📖 游玩方法", note: "将从所选范围中出10道题",
+            manualTitle: "📖 游玩方法", manH1: "1. 准备阶段", manP1: "请选择词汇范围。共10道题。",
+            manH2: "2. 测验规则", manP2: "请选择正确的读法或意思。答题越快，评级越高！",
+            manH3: "3. 评级与复习", manP3: "结束后会显示评级(S, A, B, C)。可以复习答错的词汇。",
+            manH4: "4. 收集徽章", manP4: "多玩游戏就能获得徽章。集齐所有徽章吧！",
+            finish: "完成了！", scoreLabel: "分数：", timeLabel: "用时：", secLabel: "秒",
+            reviewTitle: "再复习一下吧", btnBackStart: "返回首页", btnViewBadges: "🏅 查看徽章",
+            badgeTitle: "🏅 我的徽章", badgeDesc: "多玩游戏，收集徽章吧！", btnBack: "返回",
+            newBadge: "🎉 新徽章！", secretName: "神秘徽章", secretHint: "解锁条件是秘密",
+            badges: {
+                first_play: { t: "第一次游玩", d: "玩1次" }, play_30: { t: "习惯玩家", d: "玩30次" },
+                play_100: { t: "测验大师", d: "玩100次" }, correct_50: { t: "词汇之蛋", d: "答对50题" },
+                correct_300: { t: "词汇博士", d: "答对300题" }, correct_800: { t: "现场专家", d: "答对800题" },
+                s_rank_1: { t: "S级初体验", d: "首次获得S级" }, s_rank_10: { t: "精英实习生", d: "获得10次S级" },
+                s_rank_30: { t: "传说中的前辈", d: "获得30次S级" }, perfect: { t: "完美！", d: "10题全部答对" },
+                streak_30: { t: "状态绝佳！", d: "连续答对30题" }, lucky_7: { t: "勉强过关！", d: "刚好答对7题" }
+            }
+        },
+        ne: {
+            title: "कामको शब्दावली<br>क्विज", desc: "शब्दहरूको <strong>उच्चारण</strong> र <strong>अर्थ</strong> जवाफ दिनुहोस्।",
+            mode1: "हप्ता १ (1~10)", mode2: "हप्ता २ (1~20)", mode3: "हप्ता ३ (1~30)", mode4: "सबै (1~40)",
+            btnBadges: "🏅 मेरो ब्याजहरू", btnManual: "📖 कसरी खेल्ने", note: "१० प्रश्नहरू सोधिनेछन्",
+            manualTitle: "📖 कसरी खेल्ने", manH1: "१. तयारी", manP1: "शब्दको दायरा छान्नुहोस्। १० प्रश्नहरू आउनेछन्।",
+            manH2: "२. नियमहरू", manP2: "सही उच्चारण वा अर्थ छान्नुहोस्। छिटो जवाफ दिनुहोस् र र्याङ्क बढाउनुहोस्!",
+            manH3: "३. र्याङ्क र समीक्षा", manP3: "अन्त्यमा र्याङ्क (S, A, B, C) आउनेछ। गल्ती भएका शब्दहरू फेरि हेर्न सकिन्छ।",
+            manH4: "४. ब्याज सङ्कलन", manP4: "धेरै खेलेर ब्याजहरू पाउनुहोस्। सबै सङ्कलन गर्नुहोस्!",
+            finish: "सकियो!", scoreLabel: "स्कोर:", timeLabel: "समय:", secLabel: "सेकेन्ड",
+            reviewTitle: "फेरि याद गरौं", btnBackStart: "सुरुमा फर्कनुहोस्", btnViewBadges: "🏅 ब्याजहरू हेर्नुहोस्",
+            badgeTitle: "🏅 मेरो ब्याजहरू", badgeDesc: "धेरै खेल्नुहोस् र ब्याजहरू सङ्कलन गर्नुहोस्!", btnBack: "पछाडि",
+            newBadge: "🎉 नयाँ ब्याज!", secretName: "गोप्य ब्याज", secretHint: "सर्त गोप्य छ",
+            badges: {
+                first_play: { t: "पहिलो खेल", d: "१ पटक खेल्नुहोस्" }, play_30: { t: "नियमित खेलाडी", d: "३० पटक खेल्नुहोस्" },
+                play_100: { t: "क्विज मास्टर", d: "१०० पटक खेल्नुहोस्" }, correct_50: { t: "शब्दको अण्डा", d: "५० प्रश्न सही" },
+                correct_300: { t: "शब्दको डाक्टर", d: "३०० प्रश्न सही" }, correct_800: { t: "कार्यस्थलको प्रो", d: "८०० प्रश्न सही" },
+                s_rank_1: { t: "S र्याङ्क डेब्यु", d: "पहिलो S र्याङ्क" }, s_rank_10: { t: "एलिट प्रशिक्षार्थी", d: "१० पटक S र्याङ्क" },
+                s_rank_30: { t: "लिजेन्डरी सिनियर", d: "३० पटक S र्याङ्क" }, perfect: { t: "सिद्ध!", d: "सबै १० सही" },
+                streak_30: { t: "उत्कृष्ट फर्म!", d: "लगातार ३० सही" }, lucky_7: { t: "मुस्किलले बच्यो!", d: "ठ्याक्कै ७ सही" }
+            }
+        }
     };
 
     let currentLang = 'ja'; 
