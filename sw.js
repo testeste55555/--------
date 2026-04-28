@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vocab-quiz-cache-v3'; // 必ず数字を上げる！
+const CACHE_NAME = 'vocab-quiz-cache-v3.1'; // 必ず数字を上げる！
 const urlsToCache = [
   './',
   './index.html',
