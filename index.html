@@ -148,9 +148,11 @@
 <body>
 
 <div id="app-container">
+    <!-- スタート画面 -->
     <div id="start-screen" class="screen active">
         <select id="lang-select" class="lang-selector" onchange="changeLanguage(this.value)">
             <option value="ja">🇯🇵 日本語</option>
+            <option value="en">🇺🇸 English</option>
             <option value="vi">🇻🇳 Tiếng Việt</option>
             <option value="id">🇮🇩 B. Indonesia</option>
             <option value="tl">🇵🇭 Tagalog</option>
@@ -178,6 +180,7 @@
         <p id="ui-note" style="color:#777; font-size:0.85rem; margin-top:10px; text-align:center;">えらんだ はんいから 10もん でます</p>
     </div>
 
+    <!-- 遊び方画面 -->
     <div id="manual-screen" class="screen">
         <h2 id="ui-manual-title" style="color:var(--info); margin-bottom:15px; margin-top:10px;">📖 あそびかた</h2>
         <div class="manual-container">
@@ -201,6 +204,7 @@
         <button class="btn btn-back" id="ui-btn-manual-back" onclick="switchScreen('start-screen')">もどる</button>
     </div>
 
+    <!-- クイズ画面 -->
     <div id="quiz-screen" class="screen">
         <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
         <div id="q-mode" class="q-tag">よみかたは どれですか？</div>
@@ -210,6 +214,7 @@
         <div id="choices-container" class="choices-container"></div>
     </div>
 
+    <!-- 結果画面 -->
     <div id="result-screen" class="screen">
         <div class="result-content">
             <div class="result-title" id="ui-finish">おわりました！</div>
@@ -235,6 +240,7 @@
         </div>
     </div>
 
+    <!-- バッジ画面 -->
     <div id="badge-screen" class="screen">
         <h2 id="ui-badge-title" style="color:var(--warning); margin-bottom:10px; margin-top:10px;">🏅 わたしの バッジ</h2>
         <p id="ui-badge-desc" style="margin-bottom:20px; font-size:0.9rem; color:#555;">たくさん あそんで、バッジを あつめましょう！</p>
@@ -244,7 +250,6 @@
 </div>
 
 <script>
-    // 完全版の全言語翻訳データ
     const translations = {
         ja: {
             title: "しごとの ことば<br>クイズ", desc: "ことばの<strong>「よみかた」</strong>と<br><strong>「いみ」</strong>を こたえましょう。",
@@ -271,6 +276,27 @@
                 perfect: { t: "かんぺき！", d: "10問ぜんぶ 正しくこたえる" },
                 streak_30: { t: "ぜっこうちょう！", d: "30問 つづけて正解する" },
                 lucky_7: { t: "ギリギリセーフ！", d: "ぴったり 7問正解する" }
+            }
+        },
+        en: {
+            title: "Workplace Vocab<br>Quiz", desc: "Choose the correct <strong>'Reading'</strong> or <strong>'Meaning'</strong>.",
+            mode1: "Week 1 (1-10)", mode2: "Week 2 (1-20)", mode3: "Week 3 (1-30)", mode4: "All (1-40)",
+            btnBadges: "🏅 My Badges", btnManual: "📖 How to Play", note: "10 questions will be asked.",
+            manualTitle: "📖 How to Play", manH1: "1. Preparation", manP1: "Select a range. You'll get 10 questions.",
+            manH2: "2. Rules", manP2: "Choose the correct reading or meaning. Answer quickly for a higher rank!",
+            manH3: "3. Rank & Review", manP3: "Your rank (S, A, B, C) will be shown. You can review missed words.",
+            manH4: "4. Badges", manP4: "Play more to earn badges. Let's collect them all!",
+            finish: "Finished!", scoreLabel: "Score:", timeLabel: "Time:", secLabel: "sec",
+            reviewTitle: "Let's review", btnBackStart: "Back to Home", btnViewBadges: "🏅 View Badges",
+            badgeTitle: "🏅 My Badges", badgeDesc: "Play a lot to collect badges!", btnBack: "Back",
+            newBadge: "🎉 New Badge!", secretName: "Secret", secretHint: "The condition is a secret",
+            badges: {
+                first_play: { t: "First Play", d: "Play 1 time" }, play_30: { t: "Regular Player", d: "Play 30 times" },
+                play_100: { t: "Quiz Master", d: "Play 100 times" }, correct_50: { t: "Vocab Egg", d: "50 correct answers" },
+                correct_300: { t: "Vocab Doctor", d: "300 correct answers" }, correct_800: { t: "Workplace Pro", d: "800 correct answers" },
+                s_rank_1: { t: "S Rank Debut", d: "1st S Rank" }, s_rank_10: { t: "Elite Trainee", d: "10 S Ranks" },
+                s_rank_30: { t: "Legendary Senior", d: "30 S Ranks" }, perfect: { t: "Perfect!", d: "10/10 correct" },
+                streak_30: { t: "On Fire!", d: "30 correct in a row" }, lucky_7: { t: "Lucky 7", d: "Exactly 7 correct" }
             }
         },
         vi: {
@@ -481,6 +507,32 @@
         document.getElementById('ui-badge-desc').textContent = t.badgeDesc;
         document.getElementById('ui-btn-back').textContent = t.btnBack;
         if(document.getElementById('result-screen').classList.contains('active')) updateResultText();
+        
+        // クイズ画面での「よみかた」「いみ」の表示も翻訳に合わせて更新（表示中の場合）
+        const modeEl = document.getElementById('q-mode');
+        if (modeEl && document.getElementById('quiz-screen').classList.contains('active')) {
+             if (modeEl.style.color === "rgb(2, 119, 189)" || modeEl.style.color === "#0277bd") {
+                 modeEl.textContent = currentLang === 'en' ? "Which is the reading?" :
+                                      currentLang === 'vi' ? "Cách đọc là gì?" :
+                                      currentLang === 'id' ? "Mana cara bacanya?" :
+                                      currentLang === 'tl' ? "Ano ang tamang basa?" :
+                                      currentLang === 'th' ? "คำอ่านคืออะไร?" :
+                                      currentLang === 'my' ? "အသံထွက်က ဘာလဲ?" :
+                                      currentLang === 'km' ? "តើមួយណាជាការអាន?" :
+                                      currentLang === 'zh' ? "读法是哪个？" :
+                                      currentLang === 'ne' ? "उच्चारण कुन हो?" : "よみかたは どれですか？";
+             } else {
+                 modeEl.textContent = currentLang === 'en' ? "Which is the meaning?" :
+                                      currentLang === 'vi' ? "Ý nghĩa là gì?" :
+                                      currentLang === 'id' ? "Mana artinya?" :
+                                      currentLang === 'tl' ? "Ano ang kahulugan?" :
+                                      currentLang === 'th' ? "ความหมายคืออะไร?" :
+                                      currentLang === 'my' ? "အဓိပ္ပါယ်က ဘာလဲ?" :
+                                      currentLang === 'km' ? "តើមួយណាជាអត្ថន័យ?" :
+                                      currentLang === 'zh' ? "意思是哪个？" :
+                                      currentLang === 'ne' ? "अर्थ कुन हो?" : "いみは どれですか？";
+             }
+        }
     }
 
     const vocabData = [
@@ -566,9 +618,34 @@
         document.getElementById('kanji-text').textContent = currentQ.k;
         const mode = Math.random() > 0.5 ? 'Y' : 'I';
         const modeKey = mode === 'Y' ? 'y' : 'i';
-        document.getElementById('q-mode').textContent = mode === 'Y' ? "よみかたは どれですか？" : "いみは どれですか？";
-        document.getElementById('q-mode').style.color = mode === 'Y' ? "#0277bd" : "#2e7d32";
-        document.getElementById('q-mode').style.background = mode === 'Y' ? "#e1f5fe" : "#e8f5e9";
+        
+        const modeEl = document.getElementById('q-mode');
+        if (mode === 'Y') {
+            modeEl.style.color = "#0277bd";
+            modeEl.style.background = "#e1f5fe";
+            modeEl.textContent = currentLang === 'en' ? "Which is the reading?" :
+                                 currentLang === 'vi' ? "Cách đọc là gì?" :
+                                 currentLang === 'id' ? "Mana cara bacanya?" :
+                                 currentLang === 'tl' ? "Ano ang tamang basa?" :
+                                 currentLang === 'th' ? "คำอ่านคืออะไร?" :
+                                 currentLang === 'my' ? "အသံထွက်က ဘာလဲ?" :
+                                 currentLang === 'km' ? "តើមួយណាជាការអាន?" :
+                                 currentLang === 'zh' ? "读法是哪个？" :
+                                 currentLang === 'ne' ? "उच्चारण कुन हो?" : "よみかたは どれですか？";
+        } else {
+            modeEl.style.color = "#2e7d32";
+            modeEl.style.background = "#e8f5e9";
+            modeEl.textContent = currentLang === 'en' ? "Which is the meaning?" :
+                                 currentLang === 'vi' ? "Ý nghĩa là gì?" :
+                                 currentLang === 'id' ? "Mana artinya?" :
+                                 currentLang === 'tl' ? "Ano ang kahulugan?" :
+                                 currentLang === 'th' ? "ความหมายคืออะไร?" :
+                                 currentLang === 'my' ? "အဓိပ္ပါယ်က ဘာလဲ?" :
+                                 currentLang === 'km' ? "តើមួយណាជាអត្ថន័យ?" :
+                                 currentLang === 'zh' ? "意思是哪个？" :
+                                 currentLang === 'ne' ? "अर्थ कुन हो?" : "いみは どれですか？";
+        }
+
         let choicesSet = new Set([currentQ[modeKey]]); 
         while(choicesSet.size < 4) { 
             let randData = vocabData[Math.floor(Math.random() * vocabData.length)];
