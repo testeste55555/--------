@@ -1,0 +1,43 @@
+name: Public repository safety
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # pinned v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Reject sensitive tracked files
+        shell: bash
+        run: |
+          set -euo pipefail
+          tracked="$(git ls-files)"
+          forbidden='(^|/)(\.env($|\.)|credentials|secrets|tokens|private|uploads|input|inputs|local)(/|$)|\.(pem|key|p12|pfx|jks|keystore|crt|cer|der|csr|db|db3|sqlite|sqlite3|sql|dump)$'
+          bad="$(printf '%s\n' "$tracked" | grep -Ei "$forbidden" || true)"
+          if [ -n "$bad" ]; then
+            echo 'Sensitive or private files are tracked:'
+            printf '%s\n' "$bad"
+            exit 1
+          fi
+
+      - name: Reject obvious secret material
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -nIE 'BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}' ; then
+            echo 'Possible secret material detected.'
+            exit 1
+          fi
+          exit 0
